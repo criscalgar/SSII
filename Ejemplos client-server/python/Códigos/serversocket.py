@@ -14,17 +14,17 @@ def conectar_base_datos():
 
 # Verificar si el usuario existe
 def verificar_usuario(nombre_usuario, db_conn):
-    cursor = db_conn.cursor()
+    cursor = db_conn.cursor() # es un objeto que te permite ejecutar comandos SQL y recuperar resultados de la base de datos.
     cursor.execute("SELECT id FROM usuarios WHERE nombre_usuario = %s", (nombre_usuario,))
-    return cursor.fetchone()
+    return cursor.fetchone() # se utiliza para recuperar una sola fila del resultado de una consulta SQL
 
 # Registrar un nuevo usuario
 def registrar_usuario(nombre_usuario, clave, db_conn):
     cursor = db_conn.cursor()
     cursor.execute("INSERT INTO usuarios (nombre_usuario, clave) VALUES (%s, %s)", 
                    (nombre_usuario, clave))
-    db_conn.commit()
-    return cursor.lastrowid
+    db_conn.commit() # Guarda los cambios en la base de datos
+    return cursor.lastrowid # Devuelve el ID del nuevo usuario insertado
 
 # Verificar la contraseña del usuario
 def verificar_contraseña(nombre_usuario, clave, db_conn):
@@ -49,7 +49,7 @@ PORT = 8080
 
 # Iniciar el servidor
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
+    s.bind((HOST, PORT)) # Este método asocia el socket con una dirección IP y un puerto específicos
     s.listen()
     print(f"Servidor escuchando en {HOST}:{PORT}...")
 
