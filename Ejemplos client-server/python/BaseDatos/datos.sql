@@ -1,2 +1,2 @@
 INSERT INTO usuarios (nombre_usuario, clave)
-VALUES ('cris', '123456'),('blanca','123456'),('yassine','123456');
+VALUES ('cristina calderon garcia', '123456'),('blanca garcia alonso','123456'),('yassine nacif','123456');
