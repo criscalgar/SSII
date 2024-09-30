@@ -8,10 +8,21 @@ import os
 SECRET_KEY = b"clave_super_secreta"
 
 # Función para generar un nonce único
+
+# Un nonce es un valor único que se utiliza una sola vez en una transacción o comunicación
+# para garantizar que cada operación sea única y evitar ciertos tipos de ataques, como el
+# replay attack
+
 def generar_nonce():
     return str(int(time.time())) + str(os.getpid())
 
 # Función para generar MAC usando HMAC-SHA256
+
+#La función generar_mac(mensaje) crea un código de autenticación utilizando HMAC
+#con SHA-256 y una clave secreta. Esto garantiza la integridad y la autenticidad 
+#del mensaje, lo que es crucial para evitar modificaciones no autorizadas o ataques
+#de suplantación.
+
 def generar_mac(mensaje):
     return hmac.new(SECRET_KEY, mensaje.encode('utf-8'), hashlib.sha256).hexdigest()
 
