@@ -2,6 +2,7 @@ import socket
 import mysql.connector
 import hmac
 import hashlib
+import bcrypt  # Importar bcrypt para el hashing de contraseñas
 import time
 import os
 
@@ -22,23 +23,29 @@ def conectar_base_datos():
 # Verificar si el usuario existe
 def verificar_usuario(nombre_usuario, db_conn):
     cursor = db_conn.cursor()
-    cursor.execute("SELECT id FROM usuarios WHERE nombre_usuario = %s", (nombre_usuario,))
+    nombre_usuario = nombre_usuario.lower()  # Convertir a minúsculas
+    cursor.execute("SELECT id FROM usuarios WHERE LOWER(nombre_usuario) = %s", (nombre_usuario,))
     return cursor.fetchone()
 
 # Registrar un nuevo usuario
 def registrar_usuario(nombre_usuario, clave, db_conn):
     cursor = db_conn.cursor()
+    hashed_password = bcrypt.hashpw(clave.encode('utf-8'), bcrypt.gensalt())  # Hashear la clave
     cursor.execute("INSERT INTO usuarios (nombre_usuario, clave) VALUES (%s, %s)", 
-                   (nombre_usuario, clave))
+                   (nombre_usuario.lower(), hashed_password))  # Guardar en minúsculas
     db_conn.commit()
     return cursor.lastrowid
 
 # Verificar la contraseña del usuario
 def verificar_contraseña(nombre_usuario, clave, db_conn):
     cursor = db_conn.cursor()
-    cursor.execute("SELECT id FROM usuarios WHERE nombre_usuario = %s AND clave = %s", 
-                   (nombre_usuario, clave))
-    return cursor.fetchone()
+    nombre_usuario = nombre_usuario.lower()  # Convertir a minúsculas
+    cursor.execute("SELECT clave FROM usuarios WHERE LOWER(nombre_usuario) = %s", 
+                   (nombre_usuario,))
+    result = cursor.fetchone()
+    if result and bcrypt.checkpw(clave.encode('utf-8'), result[0].encode('utf-8')):  # Verificar la clave hasheada
+        return True
+    return False
 
 # Registrar la transacción en la base de datos
 def registrar_transaccion(emisor_nombre, destinatario_nombre, cantidad, db_conn):
@@ -87,7 +94,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             datos = data.decode('utf-8').split(',')
             if len(datos) >= 5:
                 accion = datos[0]
-                nombre_usuario = datos[1]
+                nombre_usuario = datos[1].lower()  # Convertir a minúsculas
                 clave = datos[2]
                 nonce = datos[3]
                 mac = datos[4]
@@ -107,8 +114,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         respuesta = "El usuario ya existe."
 
                 elif accion.lower() == "iniciar":
-                    usuario_info = verificar_contraseña(nombre_usuario, clave, db_conn)
-                    if usuario_info:
+                    if verificar_contraseña(nombre_usuario, clave, db_conn):
                         respuesta = "Identidad verificada. Por favor, indique el nombre del destinatario."
                     else:
                         respuesta = "Usuario o clave incorrectos."
@@ -120,7 +126,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 conn.sendall(respuesta.encode('utf-8'))
 
                 if 'Identidad verificada' in respuesta:
-                    destinatario = conn.recv(1024).decode('utf-8')
+                    destinatario = conn.recv(1024).decode('utf-8').lower()  # Convertir a minúsculas
                     if not verificar_usuario(destinatario, db_conn):
                         respuesta = "Error: El usuario destinatario no existe."
                         conn.sendall(respuesta.encode('utf-8'))

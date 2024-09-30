@@ -35,7 +35,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     nombre_usuario = input("\nIngrese el nombre de usuario (nombre y apellidos): ")
     clave = input("\nIngrese la clave: ")
 
-    nombre_usuario = nombre_usuario.lower();
+    nombre_usuario = nombre_usuario.lower()
 
     # Generar un nonce único para la transacción
     nonce = generar_nonce()
@@ -56,8 +56,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     if "Identidad verificada" in respuesta:
         # Pedir al usuario el nombre del destinatario
-        destinatario = input("\nIngrese el nombre del destinatario (nombre y apellidos):")
-        destinatario = destinatario.lower();
+        destinatario = input("\nIngrese el nombre del destinatario (nombre y apellidos): ")
+        destinatario = destinatario.lower()
         s.sendall(destinatario.encode('utf-8'))
 
         # Recibir respuesta sobre la verificación del destinatario
