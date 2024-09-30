@@ -41,11 +41,11 @@ def verificar_contraseña(nombre_usuario, clave, db_conn):
     return cursor.fetchone()
 
 # Registrar la transacción en la base de datos
-def registrar_transaccion(usuario_id, cantidad, db_conn):
+def registrar_transaccion(emisor_nombre, destinatario_nombre, cantidad, db_conn):
     cursor = db_conn.cursor()
     cursor.execute(
-        "INSERT INTO transacciones (usuario_id, cantidad) VALUES (%s, %s)", 
-        (usuario_id, cantidad)
+        "INSERT INTO transacciones (usuario_origen, usuario_destino, cantidad) VALUES (%s, %s, %s)", 
+        (emisor_nombre, destinatario_nombre, cantidad)
     )
     db_conn.commit()
     return cursor.lastrowid
@@ -109,8 +109,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 elif accion.lower() == "iniciar":
                     usuario_info = verificar_contraseña(nombre_usuario, clave, db_conn)
                     if usuario_info:
-                        usuario_id = usuario_info[0]
-                        respuesta = "Identidad verificada. Por favor, envie la cantidad a transferir."
+                        respuesta = "Identidad verificada. Por favor, indique el nombre del destinatario."
                     else:
                         respuesta = "Usuario o clave incorrectos."
 
@@ -121,14 +120,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 conn.sendall(respuesta.encode('utf-8'))
 
                 if 'Identidad verificada' in respuesta:
-                    data = conn.recv(1024)
-                    if not data:
-                        break
+                    destinatario = conn.recv(1024).decode('utf-8')
+                    if not verificar_usuario(destinatario, db_conn):
+                        respuesta = "Error: El usuario destinatario no existe."
+                        conn.sendall(respuesta.encode('utf-8'))
+                        continue
                     
-                    cantidad = float(data.decode('utf-8'))
+                    respuesta = "Usuario destinatario verificado. Ingrese la cantidad a transferir."
+                    conn.sendall(respuesta.encode('utf-8'))
+
+                    cantidad = float(conn.recv(1024).decode('utf-8'))
                     
                     # Registrar la transacción
-                    transaccion_id = registrar_transaccion(usuario_id, cantidad, db_conn)
+                    transaccion_id = registrar_transaccion(nombre_usuario, destinatario, cantidad, db_conn)
                     respuesta = f"Transferencia #{transaccion_id} registrada exitosamente."
                     conn.sendall(respuesta.encode('utf-8'))
 

@@ -23,11 +23,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
 
     # Pedir al usuario que elija una acción
-    accion = input("Ingrese:\n\n-'Registrar' para crear un nuevo usuario\n-'Iniciar' para iniciar sesión\nAccion a realizar: ")
+    accion = input("Ingrese:\n\n-'Registrar' para crear un nuevo usuario\n-'Iniciar' para iniciar sesion\n\nAccion a realizar: ")
 
     # Pedir al usuario que ingrese sus datos
-    nombre_usuario = input("Ingrese el nombre de usuario: ")
-    clave = input("Ingrese la clave: ")
+    nombre_usuario = input("\nIngrese el nombre de usuario: ")
+    clave = input("\nIngrese la clave: ")
 
     # Generar un nonce único para la transacción
     nonce = generar_nonce()
@@ -44,11 +44,20 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     
     # Recibir la respuesta del servidor
     respuesta = s.recv(1024).decode('utf-8')
-    print(f"Respuesta del servidor: {respuesta}")
+    print(f"\n{respuesta}")
 
     if "Identidad verificada" in respuesta:
-        cantidad = input("Ingrese la cantidad a transferir: ")
-        s.sendall(cantidad.encode('utf-8'))
+        # Pedir al usuario el nombre del destinatario
+        destinatario = input("\nIngrese el nombre del destinatario: ")
+        s.sendall(destinatario.encode('utf-8'))
 
+        # Recibir respuesta sobre la verificación del destinatario
         respuesta = s.recv(1024).decode('utf-8')
-        print(f"Respuesta del servidor: {respuesta}")
+        print(f"\n{respuesta}")
+
+        if "verificado" in respuesta:
+            cantidad = input("\nIngrese la cantidad a transferir: ")
+            s.sendall(cantidad.encode('utf-8'))
+
+            respuesta = s.recv(1024).decode('utf-8')
+            print(f"\n{respuesta}")
