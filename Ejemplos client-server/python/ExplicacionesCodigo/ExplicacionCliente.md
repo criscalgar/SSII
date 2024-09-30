@@ -1,119 +1,137 @@
-Librerías Importadas
+*Librerías Importadas*
 
-socket: Esta biblioteca es parte de la biblioteca estándar de Python y se utiliza para crear conexiones de red.
-Permite la comunicación entre el cliente y el servidor mediante el uso de sockets, que son puntos finales para
-el envío y recepción de datos.
+**socket:**
 
-hmac: HMAC (Hash-based Message Authentication Code) es un mecanismo que utiliza una función hash y una clave
-secreta para proporcionar autenticación de mensajes. Se utiliza para asegurar la integridad y autenticidad de los
-datos enviados entre el cliente y el servidor.
+Esta biblioteca es parte de la biblioteca estándar de Python y se utiliza para crear
+conexiones de red. Permite que los programas se comuniquen a través de la red utilizando 
+sockets, que son puntos finales para el envío y recepción de datos.
 
-hashlib: Esta biblioteca proporciona una interfaz para varios algoritmos de hash, incluyendo SHA-256. Se utiliza
-para generar un resumen (hash) de los datos, que es esencial para crear el MAC.
+**hmac:**
 
-time: Se utiliza para obtener el tiempo actual, que se emplea en la generación de un nonce único. El nonce ayuda 
-a prevenir ataques de repetición al garantizar que cada mensaje sea único.
+Esta biblioteca se utiliza para implementar HMAC (Hash-based Message Authentication Code),
+un mecanismo que combina una función hash con una clave secreta para proporcionar
+autenticación y asegurar la integridad de los datos.
 
-os: Proporciona una manera de interactuar con el sistema operativo. Se utiliza aquí para obtener el ID del proceso
-actual (os.getpid()), que se combina con el tiempo para generar un nonce único.
+**hashlib:** 
 
+Esta biblioteca proporciona funciones para calcular hashes usando varios algoritmos, como
+SHA-256. Se utiliza aquí para generar el hash necesario para el MAC.
 
-*Clave Secreta:*
+**time:** 
 
-SECRET_KEY = b"clave_super_secreta"
+Proporciona funciones relacionadas con el tiempo, como obtener el tiempo actual. Se utiliza
+en este código para generar un nonce único.
 
-Se define una clave secreta compartida entre el cliente y el servidor. Esta clave se utiliza para generar el código
-de autenticación del mensaje (MAC) y asegurar la integridad de los datos.
+**os:**
 
-*Generación de Nonce:*
+Permite interactuar con el sistema operativo. En este caso, se utiliza para obtener el ID del
+proceso actual (os.getpid()), que se combina con el tiempo para generar un nonce único.
 
-def generar_nonce():
-    return str(int(time.time())) + str(os.getpid())
+*Descripción del Código*
 
-Esta función genera un nonce único combinando el tiempo actual (en segundos desde la época) con el ID del proceso.
-Esto asegura que cada nonce sea diferente, incluso si se generan en rápida sucesión.
+**Clave Secreta:**
 
-*Generación de MAC:*
+*SECRET_KEY = b"clave_super_secreta"*
 
-def generar_mac(mensaje):
-    return hmac.new(SECRET_KEY, mensaje.encode('utf-8'), hashlib.sha256).hexdigest()
+Se define una clave secreta compartida entre el cliente y el servidor. Esta clave es fundamental
+para la generación del código de autenticación del mensaje (MAC), asegurando que solo las partes
+que conocen esta clave puedan verificar la integridad de los datos.
 
-Esta función genera un MAC utilizando HMAC con el algoritmo SHA-256. Toma un mensaje (cadena de texto), lo codifica
-en bytes y lo utiliza junto con la SECRET_KEY para crear un resumen hash. El resultado se devuelve como una cadena
-hexadecimal.
+**Generación de Nonce:**
 
-*Configuración del Cliente:*
+*def generar_nonce():*
+    *return str(int(time.time())) + str(os.getpid())*
 
-HOST = "127.0.0.1"
-PORT = 8080
+La función generar_nonce crea un nonce único combinando el tiempo actual (en segundos desde la época)
+con el ID del proceso. Esto garantiza que cada nonce sea diferente, lo que es crucial para prevenir
+ataques de repetición. Un nonce es un número que se utiliza una vez para asegurar que cada solicitud
+es única.
 
-Aquí se especifica la dirección IP y el puerto al que se conectará el cliente. En este caso, se conecta al servidor
-que está en la misma máquina (127.0.0.1 se refiere a localhost).
+**Generación de MAC:**
 
-*Conexión al Servidor:*
+*def generar_mac(mensaje):*
+    *return hmac.new(SECRET_KEY, mensaje.encode('utf-8'), hashlib.sha256).hexdigest()*
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((HOST, PORT))
+Esta función genera un MAC utilizando HMAC con el algoritmo SHA-256. Recibe un mensaje (en forma de cadena), lo codifica en bytes y utiliza la SECRET_KEY para generar un hash que actúa como código de autenticación. El resultado se devuelve en forma de cadena hexadecimal.
 
-Se crea un socket TCP y se conecta al servidor en la dirección y puerto especificados. La instrucción with asegura que
-el socket se cierre adecuadamente al final del bloque.
+**Configuración del Cliente:**
 
-*Interacción con el Usuario:*
+*HOST = "127.0.0.1"*
+*PORT = 8080*
 
-accion = input("Ingrese:\n\n-'Registrar' para crear un nuevo usuario\n-'Iniciar' para iniciar sesión\nAccion a realizar: ")
-nombre_usuario = input("Ingrese el nombre de usuario: ")
-clave = input("Ingrese la clave: ")
+Se especifican la dirección IP y el puerto del servidor al que se conectará el cliente. Aquí, 127.0.0.1 se refiere a localhost, lo que significa que el cliente se está conectando a un servidor que se ejecuta en la misma máquina.
 
-Se le pide al usuario que elija una acción (Registrar o Iniciar) y que proporcione su nombre de usuario y contraseña.
+**Conexión al Servidor:**
 
-*Generación del Nonce y Formateo del Mensaje:*
+*with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:*
+    *s.connect((HOST, PORT))*
 
-nonce = generar_nonce()
-mensaje = f"{accion},{nombre_usuario},{clave},{nonce}"
+Se crea un socket TCP y se conecta al servidor especificado en HOST y PORT. La instrucción with asegura que el socket se cierre adecuadamente al final del bloque, liberando los recursos del sistema.
 
-Se genera un nonce único y se crea un mensaje que contiene la acción, el nombre de usuario, la clave y el nonce. Este mensaje
-se utilizará para la autenticación.
+**Interacción con el Usuario:**
 
-*Generación del MAC:*
+*accion = input("Ingrese:\n\n-'Registrar' para crear un nuevo usuario\n-'Iniciar' para iniciar sesión\n\nAccion a realizar: ")*
+*nombre_usuario = input("\nIngrese el nombre de usuario: ")*
+*clave = input("\nIngrese la clave: ")*
 
-mac = generar_mac(mensaje)
+Se le pide al usuario que elija una acción, ya sea registrarse o iniciar sesión, y que proporcione su nombre de usuario y contraseña.
 
-Se genera el MAC para el mensaje, lo que permite verificar su integridad y autenticidad más adelante.
+**Generación del Nonce y Formateo del Mensaje:**
 
-*Envío de Datos al Servidor:*
+*nonce = generar_nonce()*
+*mensaje = f"{accion},{nombre_usuario},{clave},{nonce}"*
 
-datos = f"{mensaje},{mac}"
-s.sendall(datos.encode('utf-8'))
+Se genera un nonce único y se crea un mensaje que contiene la acción elegida, el nombre de usuario, la clave y el nonce. Este mensaje se utilizará para la autenticación y para la comunicación con el servidor.
 
-Se combinan el mensaje y el MAC en una sola cadena, que se codifica en bytes y se envía al servidor. sendall garantiza que todos
-los datos sean enviados.
+**Generación del MAC:**
 
-*Recepción de la Respuesta del Servidor:*
+*mac = generar_mac(mensaje)*
 
-respuesta = s.recv(1024).decode('utf-8')
-print(f"Respuesta del servidor: {respuesta}")
+Se genera el MAC para el mensaje utilizando la función generar_mac. Esto asegura que el mensaje no haya sido modificado durante la transmisión.
 
-El cliente espera y recibe una respuesta del servidor. recv(1024) indica que se recibirán hasta 1024 bytes de datos. La respuesta
-se decodifica de bytes a una cadena.
+**Envío de Datos al Servidor:**
 
-*Transferencia de Cantidad (si la Identidad es Verificada):*
+*datos = f"{mensaje},{mac}"*
+*s.sendall(datos.encode('utf-8'))*
 
-if "Identidad verificada" in respuesta:
-    cantidad = input("Ingrese la cantidad a transferir: ")
-    s.sendall(cantidad.encode('utf-8'))
+Se combinan el mensaje y el MAC en una sola cadena, que se codifica en bytes y se envía al servidor usando sendall. Esta función asegura que todos los datos sean enviados correctamente.
 
-Si la respuesta del servidor indica que la identidad del usuario ha sido verificada, el cliente solicita la cantidad a transferir
-y la envía al servidor.
+**Recepción de la Respuesta del Servidor:**
 
-*Recepción de Respuesta Final:*
+*respuesta = s.recv(1024).decode('utf-8')*
+*print(f"\n{respuesta}")*
 
-respuesta = s.recv(1024).decode('utf-8')
-print(f"Respuesta del servidor: {respuesta}")
+El cliente espera y recibe una respuesta del servidor. recv(1024) indica que se recibirán hasta 1024 bytes de datos. La respuesta se decodifica de bytes a una cadena y se imprime.
 
-El cliente recibe la respuesta final del servidor, que puede confirmar la transacción u ofrecer información adicional.
+**Transferencia de Cantidad (si la Identidad es Verificada):**
 
-Resumen
-Este código implementa un cliente que se conecta a un servidor mediante sockets. Utiliza HMAC para asegurar la integridad de los
-mensajes enviados y genera un nonce único para cada transacción, lo que ayuda a prevenir ataques de repetición. El cliente
-interactúa con el usuario para registrar o iniciar sesión, y puede enviar una cantidad para transferir si la identidad del usuario
-es verificada con éxito.
+*if "Identidad verificada" in respuesta:*
+    *destinatario = input("\nIngrese el nombre del destinatario: ")*
+    *s.sendall(destinatario.encode('utf-8'))*
+
+Si la respuesta del servidor indica que la identidad del usuario ha sido verificada, el cliente solicita el nombre del destinatario y lo envía al servidor.
+
+**Recepción de Respuesta sobre el Destinatario:**
+
+*respuesta = s.recv(1024).decode('utf-8')*
+*print(f"\n{respuesta}")*
+
+El cliente recibe una respuesta sobre la verificación del destinatario y la imprime. Esto puede confirmar si el destinatario existe o está habilitado para recibir transferencias.
+
+**Ingreso y Envío de la Cantidad a Transferir:**
+
+*if "verificado" in respuesta:*
+    *cantidad = input("\nIngrese la cantidad a transferir: ")*
+    *s.sendall(cantidad.encode('utf-8'))*
+
+Si el destinatario es verificado, se solicita al usuario que ingrese la cantidad que desea transferir y se envía esta cantidad al servidor.
+
+**Recepción de Respuesta Final:**
+
+*respuesta = s.recv(1024).decode('utf-8')*
+*print(f"\n{respuesta}")*
+
+Finalmente, el cliente espera y recibe la respuesta final del servidor, que puede confirmar que la transferencia se ha realizado con éxito o proporcionar información adicional.
+
+**Resumen**
+Este código implementa un cliente que se conecta a un servidor utilizando sockets. Utiliza HMAC para asegurar la integridad de los mensajes y genera un nonce único para cada transacción, ayudando a prevenir ataques de repetición. El cliente interactúa con el usuario para registrar o iniciar sesión y permite transferencias de dinero a otros usuarios, verificando tanto la identidad del usuario como la del destinatario antes de procesar la transacción.
