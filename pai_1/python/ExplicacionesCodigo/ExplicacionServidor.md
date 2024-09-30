@@ -1,208 +1,102 @@
-Este código implementa un servidor que interactúa con una base de datos MySQL para autenticar usuarios,
-registrar nuevas cuentas y manejar transacciones financieras. El servidor usa verificación de integridad
-mediante el uso de HMAC (Hash-based Message Authentication Code) para asegurarse de que los mensajes no
-hayan sido alterados y proteger contra ataques de repetición (replay attacks). A continuación se detalla
-el uso de las bibliotecas y funciones incluidas en el código.
+Este código implementa un servidor que maneja la autenticación de usuarios y transacciones entre ellos mediante comunicación con un cliente a través de sockets. Además, integra una base de datos MySQL/MariaDB para almacenar usuarios y transacciones, usando bcrypt para asegurar las contraseñas, y HMAC para proteger la integridad de los mensajes.
 
-*Librerías Importadas*
+*Librerías implementadas:*
 
-**socket:** 
+**socket:**
 
-Esta biblioteca proporciona una interfaz para la comunicación a través de redes. Permite crear sockets que se pueden utilizar para enviar y recibir datos a través de protocolos como TCP/IP.
+Se utiliza para la comunicación entre el servidor y el cliente a través de sockets TCP.
 
-**mysql.connector:** 
+**mysql.connector:**
 
-Esta biblioteca se utiliza para interactuar con bases de datos MySQL. Permite ejecutar consultas SQL y gestionar la conexión a la base de datos.
+Permite conectarse a una base de datos MySQL o MariaDB para realizar operaciones como consultas y modificaciones.
 
-**hmac:** 
+**hmac:**
 
-Esta biblioteca permite crear códigos de autenticación de mensajes basados en hash (HMAC). Es útil para verificar la integridad de los mensajes, asegurando que no hayan sido alterados.
+Genera códigos de autenticación de mensaje (MAC) utilizando una clave secreta para asegurar la integridad y autenticidad del mensaje.
 
-**hashlib:** 
+**hashlib:**
 
-Esta biblioteca proporciona acceso a funciones de hashing, como SHA-256, que se utilizan para generar un hash de un mensaje.
+Proporciona funciones de hashing, en este caso, sha256 es utilizado junto con hmac.
 
-**time:** 
+**bcrypt:** 
 
-Se utiliza para trabajar con tiempos y fechas, en este caso, para generar un nonce único basado en el tiempo.
+Utilizado para hashear las contraseñas de los usuarios, permitiendo una manera segura de almacenarlas y verificarlas.
 
-**os:** 
+**time y os:**
 
-Esta biblioteca proporciona una forma de interactuar con el sistema operativo. Aquí se usa para obtener el ID del proceso, que se utiliza en la generación del nonce.
+Utilizadas para generar nonces únicos que evitan ataques de repetición.
 
-*Explicación del Código*
+*Explicación de la funcionalidad:*
 
-**Configuración y Clave Secreta**
+**SECRET_KEY:**
 
-*SECRET_KEY = b"clave_super_secreta"*
+Es una clave secreta compartida entre el cliente y el servidor, utilizada para generar el MAC que protege los mensajes.
 
-Se define una clave secreta compartida que se utiliza para la creación de HMAC. Esta clave debe mantenerse en secreto y no debe ser revelada.
+*Conexión a la base de datos (conectar_base_datos):*
 
-**Función para Conectar a la Base de Datos**
+Esta función establece una conexión con la base de datos MySQL/MariaDB. Usa los parámetros de conexión como host, user, password, database, charset, y collation.
 
-*def conectar_base_datos():*
-    *return mysql.connector.connect(*
-        *host="127.0.0.1",*
-        *user="root",*
-        *password="root",*
-        *database="pai_1",*
-        *charset='utf8mb4',*
-        *collation='utf8mb4_general_ci'*
-    *)*
+*Verificación y manejo de usuarios:*
 
-Esta función establece una conexión con la base de datos MySQL, utilizando los parámetros proporcionados (host, usuario, contraseña y nombre de la base de datos). Devuelve un objeto de conexión que se utiliza para realizar operaciones en la base de datos.
+**verificar_usuario(nombre_usuario, db_conn):**
 
-*Funciones para Manejo de Usuarios*
+Verifica si un usuario ya existe en la base de datos. Convierte el nombre de usuario a minúsculas para evitar problemas de sensibilidad de mayúsculas/minúsculas.
 
-**Verificar si el Usuario Existe**
+**registrar_usuario(nombre_usuario, clave, db_conn):* *
 
-*def verificar_usuario(nombre_usuario, db_conn):*
-    *cursor = db_conn.cursor()*
-    *cursor.execute("SELECT id FROM usuarios WHERE nombre_usuario = %s", (nombre_usuario,))*
-    *return cursor.fetchone()*
+Registra un nuevo usuario en la base de datos. La contraseña es hasheada con bcrypt antes de ser almacenada. Esto asegura que incluso si la base de datos es comprometida, las contraseñas no se verán comprometidas directamente.
 
-Esta función verifica si un usuario existe en la base de datos consultando la tabla usuarios. Si el usuario existe, devuelve su ID.
+**verificar_contraseña(nombre_usuario, clave, db_conn):**
 
-**Registrar un Nuevo Usuario**
+Verifica si la contraseña proporcionada por el usuario coincide con la clave hasheada almacenada en la base de datos. Utiliza bcrypt.checkpw para comparar la clave proporcionada con la clave hasheada.
 
-*def registrar_usuario(nombre_usuario, clave, db_conn):*
-    *cursor = db_conn.cursor()*
-    *cursor.execute("INSERT INTO usuarios (nombre_usuario, clave) VALUES (%s, %s)",*
-                  *(nombre_usuario, clave))*
-    *db_conn.commit()*
-    *return cursor.lastrowid*
+**Registro de transacciones (registrar_transaccion):**
 
-Esta función inserta un nuevo usuario en la base de datos. Se utilizan sentencias SQL para agregar el nombre_usuario y clave, y luego se realiza un commit para guardar los cambios.
+Esta función inserta un registro de transacción en la base de datos, con el nombre del emisor, destinatario y la cantidad transferida.
 
-**Verificar la Contraseña del Usuario**
+*Verificación de integridad del mensaje:*
 
-*def verificar_contraseña(nombre_usuario, clave, db_conn):*
-    *cursor = db_conn.cursor()*
-    *cursor.execute("SELECT id FROM usuarios WHERE nombre_usuario = %s AND clave = %s",* 
-                   *(nombre_usuario, clave))*
-    *return cursor.fetchone()*
+**verificar_mac(mensaje, mac, nonce, nonce_list):**
 
-Esta función verifica si las credenciales (nombre de usuario y clave) son correctas, consultando la base de datos.
+Esta función asegura la integridad del mensaje recibido por el servidor. Verifica el MAC del mensaje y se asegura de que el nonce no haya sido utilizado previamente, previniendo ataques de repetición.
 
-**Función para Registrar Transacciones**
+**Configuración y funcionamiento del servidor:**
 
-*def registrar_transaccion(emisor_nombre, destinatario_nombre, cantidad, db_conn):*
-    *cursor = db_conn.cursor()*
-    *cursor.execute(*
-        *"INSERT INTO transacciones (emisor_nombre, destinatario_nombre, cantidad) VALUES (%s, %s, %s)",* 
-        *(emisor_nombre, destinatario_nombre, cantidad)*
-    *)*
-    *db_conn.commit()*
-    *return cursor.lastrowid*
+Se utiliza socket para crear un servidor TCP que escuche en la dirección 127.0.0.1 y el puerto 8080. El servidor espera conexiones de los clientes.
 
-Esta función registra una transacción en la base de datos, almacenando los nombres del emisor y del destinatario, así como la cantidad transferida.
+Al aceptar una conexión, se maneja la autenticación de usuarios. El cliente envía su acción (registrar o iniciar sesión), nombre de usuario, clave, nonce, y MAC. El servidor verifica la integridad del mensaje utilizando verificar_mac.
 
-**Verificación de MAC y Nonce**
+**Registro de usuarios o inicio de sesión:**
 
-*def verificar_mac(mensaje, mac, nonce, nonce_list):*
-    *mac_calculado = hmac.new(SECRET_KEY, mensaje.encode('utf-8'), hashlib.sha256).hexdigest()*
-    *if mac != mac_calculado:*
-        *return False*
-    *if nonce in nonce_list:*
-        *return False  # Replay attack detectado*
-    *nonce_list.append(nonce)*
-    *return True*
+Si el cliente selecciona la acción "registrar", el servidor verifica si el usuario ya existe. Si no existe, lo registra con la contraseña hasheada.
 
-Esta función verifica la integridad del mensaje. Calcula un nuevo HMAC utilizando la SECRET_KEY y compara con el HMAC recibido. También comprueba si el nonce ya ha sido utilizado, para prevenir ataques de repetición.
+Si el cliente selecciona la acción "iniciar", el servidor verifica si la contraseña proporcionada es correcta comparándola con el hash almacenado.
 
-**Configuración del Servidor**
+**Realización de transacciones:**
 
-*HOST = "127.0.0.1"*
-*PORT = 8080*
-*nonce_list = []  # Lista para almacenar nonces usados*
+Una vez autenticado el usuario, puede realizar una transferencia ingresando el nombre del destinatario y la cantidad a transferir. El servidor verifica que el destinatario exista y, si es válido, registra la transacción en la base de datos.
 
-Se define la dirección y el puerto en el que el servidor escuchará las conexiones. Se inicializa una lista para rastrear los nonces utilizados.
+*Seguridad implementada:*
 
-**Iniciar el Servidor**
+Uso de bcrypt para hashear contraseñas: bcrypt es una herramienta estándar en seguridad que proporciona hashing seguro de contraseñas, haciendo más difícil que los atacantes puedan obtener las contraseñas originales en caso de un compromiso de la base de datos.
 
-*with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:*
-    *s.bind((HOST, PORT))*
-    *s.listen()*
-    *print(f"Servidor escuchando en {HOST}:{PORT}...")*
+**Verificación de MAC (Message Authentication Code):**
 
-Se crea un socket TCP que se enlaza a la dirección y el puerto especificados. Luego, el servidor comienza a escuchar las conexiones entrantes.
+Garantiza la integridad y autenticidad de los mensajes intercambiados. Si el MAC no coincide, el servidor sabe que el mensaje fue alterado.
 
-**Ciclo Principal del Servidor**
+**Uso de nonces:**
 
-*conn, addr = s.accept()*
-*with conn:*
-    *print(f"Conectado por {addr}")*
+Cada transacción tiene un nonce único, lo que impide que un atacante capture y vuelva a enviar mensajes anteriores (ataque de repetición).
 
-*db_conn = conectar_base_datos()*
+**Flujo del programa:**
 
-*while True:*
-    *# Recibir datos del cliente*
-    *data = conn.recv(1024)*
-    *if not data:*
-        *break*
-        
-Una vez que se acepta una conexión, se establece la conexión con la base de datos. El servidor entra en un ciclo donde recibe datos del cliente. Si no se reciben datos, el bucle se rompe.
+El servidor se inicia y escucha en la dirección 127.0.0.1:8080.
+Cuando un cliente se conecta, el servidor recibe los datos que incluyen la acción, el nombre de usuario, la clave, el nonce y el MAC.
+El servidor verifica que el MAC y el nonce sean válidos.
 
-**Procesamiento de Datos Recibidos**
+*Dependiendo de la acción, el servidor:*
 
-*datos = data.decode('utf-8').split(',')*
-*if len(datos) >= 5:*
-    *accion = datos[0]*
-    *nombre_usuario = datos[1]*
-    *clave = datos[2]*
-    *nonce = datos[3]*
-    *mac = datos[4]*
-
-
-Los datos recibidos se decodifican y se dividen en componentes: acción (registrar o iniciar sesión), nombre de usuario, clave, nonce y MAC.
-
-**Verificación de la Integridad del Mensaje**
-
-*mensaje = f"{accion},{nombre_usuario},{clave},{nonce}"*
-*if not verificar_mac(mensaje, mac, nonce, nonce_list):*
-    *respuesta = "Error: Mensaje modificado o nonce reutilizado."*
-    *conn.sendall(respuesta.encode('utf-8'))*
-    *continue*
-
-Se verifica la integridad del mensaje utilizando la función verificar_mac. Si la verificación falla, se envía un mensaje de error al cliente.
-
-**Manejo de Acciones del Cliente**
-
-*if accion.lower() == "registrar":*
-    *if not verificar_usuario(nombre_usuario, db_conn):*
-        *usuario_id = registrar_usuario(nombre_usuario, clave, db_conn)*
-        *respuesta = f"Usuario '{nombre_usuario}' registrado exitosamente."*
-    *else:*
-        *respuesta = "El usuario ya existe."*
-
-*elif accion.lower() == "iniciar":*
-    *usuario_info = verificar_contraseña(nombre_usuario, clave, db_conn)*
-    *if usuario_info:*
-        *respuesta = "Identidad verificada. Por favor, indique el nombre del destinatario."*
-    *else:*
-        *respuesta = "Usuario o clave incorrectos."*
-
-Dependiendo de la acción solicitada (registrar o iniciar sesión), se realiza la verificación correspondiente y se envía una respuesta adecuada al cliente.
-
-**Verificación y Registro de Transacciones**
-
-*if 'Identidad verificada' in respuesta:*
-    *destinatario = conn.recv(1024).decode('utf-8')*
-    *if not verificar_usuario(destinatario, db_conn):*
-        *respuesta = "Error: El usuario destinatario no existe."*
-        *conn.sendall(respuesta.encode('utf-8'))*
-        *continue*
-    
-**Registrar la transacción**
-
-*transaccion_id = registrar_transaccion(nombre_usuario, destinatario, cantidad, db_conn)*
-*respuesta = f"Transferencia #{transaccion_id} registrada exitosamente."*
-*conn.sendall(respuesta.encode('utf-8'))*
-
-Si la identidad del usuario ha sido verificada, se procede a solicitar el nombre del destinatario. Luego, se verifica si el destinatario existe y se registra la transacción en la base de datos.
-
-**Cierre de Conexiones**
-
-*db_conn.close()*
-
-Al final del bucle, se cierra la conexión con la base de datos, asegurando que todos los recursos se liberen adecuadamente.
+Registra un nuevo usuario o inicia sesión verificando la contraseña hasheada.
+Si la autenticación es exitosa, el usuario puede realizar una transacción indicando el destinatario y la cantidad.
+El servidor verifica que el destinatario exista y luego registra la transacción en la base de datos.
+Este código tiene una buena estructura básica para asegurar las contraseñas de los usuarios y proteger la integridad de los mensajes, aunque sería recomendable implementar cifrado en las comunicaciones para una mayor seguridad en un entorno real.
