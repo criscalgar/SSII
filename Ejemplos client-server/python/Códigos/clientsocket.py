@@ -25,8 +25,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     # Pedir al usuario que elija una acción
     accion = input("Ingrese:\n\n-'Registrar' para crear un nuevo usuario\n-'Iniciar' para iniciar sesion\n\nAccion a realizar: ")
 
+    # Verificar que la acción sea válida
+    if accion not in ['registrar', 'iniciar']:
+        print("\nAccion invalida. Desconectando...")
+        s.close()  # Cerrar la conexión
+        exit()  # Salir del programa
+
     # Pedir al usuario que ingrese sus datos
-    nombre_usuario = input("\nIngrese el nombre de usuario: ")
+    nombre_usuario = input("\nIngrese el nombre de usuario (nombre y apellidos): ")
     clave = input("\nIngrese la clave: ")
 
     # Generar un nonce único para la transacción
@@ -48,7 +54,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     if "Identidad verificada" in respuesta:
         # Pedir al usuario el nombre del destinatario
-        destinatario = input("\nIngrese el nombre del destinatario: ")
+        destinatario = input("\nIngrese el nombre del destinatario (nombre y apellidos):")
         s.sendall(destinatario.encode('utf-8'))
 
         # Recibir respuesta sobre la verificación del destinatario
