@@ -42,7 +42,7 @@ Esta función establece una conexión con la base de datos MySQL/MariaDB. Usa lo
 
 Verifica si un usuario ya existe en la base de datos. Convierte el nombre de usuario a minúsculas para evitar problemas de sensibilidad de mayúsculas/minúsculas.
 
-**registrar_usuario(nombre_usuario, clave, db_conn):* *
+**registrar_usuario(nombre_usuario, clave, db_conn):**
 
 Registra un nuevo usuario en la base de datos. La contraseña es hasheada con bcrypt antes de ser almacenada. Esto asegura que incluso si la base de datos es comprometida, las contraseñas no se verán comprometidas directamente.
 
@@ -100,3 +100,37 @@ Registra un nuevo usuario o inicia sesión verificando la contraseña hasheada.
 Si la autenticación es exitosa, el usuario puede realizar una transacción indicando el destinatario y la cantidad.
 El servidor verifica que el destinatario exista y luego registra la transacción en la base de datos.
 Este código tiene una buena estructura básica para asegurar las contraseñas de los usuarios y proteger la integridad de los mensajes, aunque sería recomendable implementar cifrado en las comunicaciones para una mayor seguridad en un entorno real.
+
+
+*POR QUÉ USAR BCRYPT*
+
+Usar bcrypt para hashear contraseñas tiene varias ventajas importantes. 
+
+**1. Seguridad Robusta**
+*->* Hasheo unidireccional: bcrypt convierte la contraseña en un hash que no puede ser revertido. Esto
+     significa que incluso si alguien obtiene acceso a la base de datos, no podrá recuperar las contraseñas originales.
+     Dificultad de Ataques de Fuerza Bruta: bcrypt permite ajustar la complejidad del hash a través de un
+     factor de costo. Esto hace que el proceso de hash sea más lento y, por lo tanto, más difícil para los atacantes que intentan adivinar contraseñas a través de ataques de fuerza bruta.
+
+**2. Salting Automático**
+*->* bcrypt genera automáticamente un salt único para cada contraseña. Esto significa que incluso si dos
+     usuarios tienen la misma contraseña, los hashes serán diferentes, lo que previene ataques de tablas arcoíris.
+
+**3. Resistencia a la Computación Moderna**
+*->* bcrypt está diseñado para ser resistente frente a ataques que utilizan hardware moderno, como GPUs. 
+     A medida que la tecnología avanza, se pueden hacer más rápidas las operaciones de hash; sin embargo, bcrypt puede ajustarse a los avances en el hardware, aumentando el tiempo de hash según sea necesario.
+
+**4. Estándar de la Industria**
+*->* bcrypt se ha convertido en un estándar de facto para el almacenamiento seguro de contraseñas. Es   
+     ampliamente utilizado y ha sido revisado por expertos en seguridad, lo que le da un alto nivel de confianza.
+
+**5. Facilidad de Implementación**
+*->* La mayoría de los lenguajes de programación y marcos tienen bibliotecas bien soportadas para 
+     bcrypt, lo que facilita su integración en aplicaciones existentes.
+
+**6. Interoperabilidad**
+*->* Aunque estés utilizando HeidiSQL para gestionar tu base de datos, puedes utilizar bcrypt en tu 
+     aplicación (en el servidor) para manejar el hashing de contraseñas. Esto permite mantener las contraseñas seguras incluso si la base de datos es vulnerable.
+
+**Conclusión**
+Usar bcrypt para hashear contraseñas es una práctica de seguridad recomendada que ayuda a proteger las contraseñas de los usuarios en tu aplicación. Al hacerlo, puedes reducir significativamente el riesgo de comprometer las credenciales de los usuarios y mejorar la seguridad general de tu sistema. Si tienes más preguntas o necesitas más información sobre su implementación.
