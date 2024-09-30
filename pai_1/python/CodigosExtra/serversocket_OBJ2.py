@@ -51,20 +51,9 @@ def registrar_transaccion(emisor_nombre, destinatario_nombre, cantidad, db_conn)
     db_conn.commit()
     return cursor.lastrowid
 
-# Función para verificar MAC y nonce
-def verificar_mac(mensaje, mac, nonce, nonce_list):
-    mac_calculado = hmac.new(SECRET_KEY, mensaje.encode('utf-8'), hashlib.sha256).hexdigest()
-    if mac != mac_calculado:
-        return False
-    if nonce in nonce_list:
-        return False  # Replay attack detectado
-    nonce_list.append(nonce)
-    return True
-
 # Configuración del servidor
 HOST = "127.0.0.1"
 PORT = 8080
-nonce_list = []  # Lista para almacenar nonces usados
 
 # Iniciar el servidor
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -84,21 +73,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if not data:
                 break
 
-            # Datos recibidos: accion, nombre_usuario, clave, nonce, mac
+            # Datos recibidos: accion, nombre_usuario, clave
             datos = data.decode('utf-8').split(',')
-            if len(datos) >= 5:
+            if len(datos) >= 3:
                 accion = datos[0]
                 nombre_usuario = datos[1].lower()  # Convertir a minúsculas
                 clave = datos[2]
-                nonce = datos[3]
-                mac = datos[4]
-
-                # Verificar la integridad del mensaje con el MAC y el nonce
-                mensaje = f"{accion},{nombre_usuario},{clave},{nonce}"
-                if not verificar_mac(mensaje, mac, nonce, nonce_list):
-                    respuesta = "Error: Mensaje modificado o nonce reutilizado."
-                    conn.sendall(respuesta.encode('utf-8'))
-                    continue
 
                 if accion.lower() == "registrar":
                     if not verificar_usuario(nombre_usuario, db_conn):
