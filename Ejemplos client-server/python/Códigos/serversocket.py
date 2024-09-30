@@ -2,6 +2,8 @@ import socket
 import mysql.connector
 import hmac
 import hashlib
+import time
+import os
 
 # Clave secreta compartida entre cliente y servidor
 SECRET_KEY = b"clave_super_secreta"
@@ -48,7 +50,7 @@ def registrar_transaccion(usuario_id, cantidad, db_conn):
     db_conn.commit()
     return cursor.lastrowid
 
-# Verificar el MAC y que no se haya reutilizado el nonce
+# Función para verificar MAC y nonce
 def verificar_mac(mensaje, mac, nonce, nonce_list):
     mac_calculado = hmac.new(SECRET_KEY, mensaje.encode('utf-8'), hashlib.sha256).hexdigest()
     if mac != mac_calculado:
