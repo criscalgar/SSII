@@ -44,7 +44,7 @@ def verificar_contraseña(nombre_usuario, clave, db_conn):
 def registrar_transaccion(emisor_nombre, destinatario_nombre, cantidad, db_conn):
     cursor = db_conn.cursor()
     cursor.execute(
-        "INSERT INTO transacciones (usuario_origen, usuario_destino, cantidad) VALUES (%s, %s, %s)", 
+        "INSERT INTO transacciones (emisor_nombre, destinatario_nombre, cantidad) VALUES (%s, %s, %s)", 
         (emisor_nombre, destinatario_nombre, cantidad)
     )
     db_conn.commit()
