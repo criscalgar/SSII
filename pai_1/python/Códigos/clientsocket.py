@@ -20,10 +20,10 @@ try:
         s.connect((HOST, PORT))
 
         # Pedir al usuario que elija una acción
-        accion = input("Ingrese:\n\n-'Registrar' para crear un nuevo usuario\n-'Iniciar' para iniciar sesión\n\nAcción a realizar: ").strip().lower()
+        accion = input("Ingrese:\n\n-'Registrar' para crear un nuevo usuario\n-'Iniciar' para iniciar sesion\n\nAccion a realizar: ").strip().lower()
 
         if accion not in ['registrar', 'iniciar']:
-            print("\nAcción inválida. Desconectando...")
+            print("\nAccion no reconocida. Desconectando...")
             exit()
 
         # Pedir al usuario que ingrese sus datos
@@ -57,6 +57,6 @@ try:
                     respuesta = s.recv(1024).decode('utf-8')
                     print(f"\n{respuesta}")
                 except ValueError:
-                    print("Error: La cantidad ingresada no es válida.")
+                    print("Error: La cantidad ingresada no es valida.")
 except Exception as e:
-    print(f"Error de conexión: {e}")
+    print(f"Error de conexion: {e}")

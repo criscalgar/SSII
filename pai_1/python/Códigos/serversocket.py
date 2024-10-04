@@ -115,7 +115,7 @@ try:
                             respuesta = "Usuario o clave incorrectos."
 
                     else:
-                        respuesta = "Acción no reconocida."
+                        respuesta = "Accion no reconocida."
 
                     conn.sendall(respuesta.encode('utf-8'))
 
@@ -135,9 +135,9 @@ try:
                             respuesta = f"Transferencia #{transaccion_id} registrada exitosamente."
                             conn.sendall(respuesta.encode('utf-8'))
                         except ValueError:
-                            respuesta = "Error: La cantidad ingresada no es válida."
+                            respuesta = "Error: La cantidad ingresada no es valida."
                             conn.sendall(respuesta.encode('utf-8'))
 except Exception as e:
-    print(f"Error durante la ejecución: {e}")
+    print(f"Error durante la ejecucion: {e}")
 finally:
     db_conn.close()
