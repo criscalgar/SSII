@@ -9,7 +9,7 @@ PORT = 8080
 KEY = b'mi_clave_secreta_32_bytes_long'  # Clave secreta para el MAC
 
 def generar_nonce():
-    return os.urandom(16)  # 16 bytes de NONCE
+    return os.urandom(16).hex()  # 16 bytes de NONCE en formato hexadecimal
 
 def generar_mac(key, message):
     return hmac.new(key, message.encode('utf-8'), hashlib.sha256).hexdigest()
@@ -31,11 +31,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     clave = input("\nIngrese la clave: ")
 
     # Generar NONCE
-    nonce = generar_nonce().hex()  # Convertir a hexadecimal para enviar
+    nonce = generar_nonce()  # Generar NONCE
     mensaje = f"{accion},{nombre_usuario.lower()},{clave}"
     
     # Generar MAC
-    mac = generar_mac(KEY, mensaje + nonce)
+    mac = generar_mac(KEY, mensaje)
 
     # Formatear los datos en una cadena
     datos = f"{nonce},{mac},{mensaje}"

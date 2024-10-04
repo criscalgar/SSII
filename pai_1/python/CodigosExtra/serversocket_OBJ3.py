@@ -53,7 +53,7 @@ def registrar_transaccion(emisor_nombre, destinatario_nombre, cantidad, db_conn)
 
 # Generar NONCE
 def generar_nonce():
-    return os.urandom(16)  # 16 bytes de NONCE
+    return os.urandom(16).hex()  # 16 bytes de NONCE en formato hexadecimal
 
 # Generar MAC
 def generar_mac(key, message):
@@ -123,6 +123,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         conn.sendall(respuesta.encode('utf-8'))
 
                         if 'Identidad verificada' in respuesta:
+                            # Esperar el nombre del destinatario
                             destinatario = conn.recv(1024).decode('utf-8').lower()
                             if not verificar_usuario(destinatario, db_conn):
                                 respuesta = "Error: El usuario destinatario no existe."
