@@ -30,11 +30,22 @@ def verificar_usuario(nombre_usuario, db_conn):
 
 def registrar_usuario(nombre_usuario, clave, db_conn):
     cursor = db_conn.cursor()
+    # Cifrar la contraseña con bcrypt
     hashed_password = bcrypt.hashpw(clave.encode('utf-8'), bcrypt.gensalt())
     cursor.execute("INSERT INTO usuarios (nombre_usuario, clave) VALUES (%s, %s)", 
                    (nombre_usuario.lower(), hashed_password))
     db_conn.commit()
     return cursor.lastrowid
+
+def registrar_usuarios_por_defecto(db_conn):
+    usuarios = [
+        ("cristina calderon garcia", "123456"),
+        ("blanca garcia alonso", "123456"),
+        ("yassine nacif", "123456")
+    ]
+    
+    for nombre_usuario, clave in usuarios:
+        registrar_usuario(nombre_usuario, clave, db_conn)
 
 def verificar_contraseña(nombre_usuario, clave, db_conn):
     cursor = db_conn.cursor()
@@ -71,6 +82,9 @@ nonce_list = []
 db_conn = conectar_base_datos()
 if not db_conn:
     exit(1)
+
+# Registrar usuarios por defecto
+registrar_usuarios_por_defecto(db_conn)
 
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
