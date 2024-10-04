@@ -9,7 +9,7 @@ def conectar_base_datos():
         host="127.0.0.1",
         user="root",
         password="root",
-        database="mi_base_datos",
+        database="pai_1",
         charset='utf8mb4',
         collation='utf8mb4_general_ci'
     )
@@ -29,6 +29,16 @@ def registrar_usuario(nombre_usuario, clave, db_conn):
                    (nombre_usuario.lower(), hashed_password))  # Guardar en minúsculas
     db_conn.commit()
     return cursor.lastrowid
+
+def registrar_usuarios_por_defecto(db_conn):
+    usuarios = [
+        ("cristina calderon garcia", "123456"),
+        ("blanca garcia alonso", "123456"),
+        ("yassine nacif", "123456")
+    ]
+    
+    for nombre_usuario, clave in usuarios:
+        registrar_usuario(nombre_usuario, clave, db_conn)
 
 # Verificar la contraseña del usuario
 def verificar_contraseña(nombre_usuario, clave, db_conn):
@@ -66,7 +76,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f"Conectado por {addr}")
 
         db_conn = conectar_base_datos()
-
+        # Registrar usuarios por defecto
+        registrar_usuarios_por_defecto(db_conn)
+        
         while True:
             # Recibir datos del cliente
             data = conn.recv(1024)
