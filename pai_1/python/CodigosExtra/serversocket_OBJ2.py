@@ -32,13 +32,17 @@ def registrar_usuario(nombre_usuario, clave, db_conn):
 
 def registrar_usuarios_por_defecto(db_conn):
     usuarios = [
-        ("cristina calderon garcia", "123456"),
+        ("yassine nacif", "123456"),
         ("blanca garcia alonso", "123456"),
-        ("yassine nacif", "123456")
+        ("cristina calderon garcia", "123456")
     ]
     
     for nombre_usuario, clave in usuarios:
-        registrar_usuario(nombre_usuario, clave, db_conn)
+        if not verificar_usuario(nombre_usuario, db_conn):
+            registrar_usuario(nombre_usuario, clave, db_conn)
+            print(f"Usuario '{nombre_usuario}' registrado exitosamente.")
+        else:
+            print(f"El usuario '{nombre_usuario}' ya existe.")
 
 # Verificar la contraseña del usuario
 def verificar_contraseña(nombre_usuario, clave, db_conn):
