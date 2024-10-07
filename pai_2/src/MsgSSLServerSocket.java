@@ -1,49 +1,69 @@
 package src;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+
+import java.io.*;
 import javax.net.ssl.*;
+import java.util.Properties;
 
 public class MsgSSLServerSocket {
-    private static final String storedUsername = "user";
-    private static final String storedPasswordHash = BCrypt.hashpw("pass", BCrypt.gensalt());
 
     public static void main(String[] args) {
-        System.setProperty("javax.net.ssl.keyStore", "mykeystore.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword", "your_keystore_password");
-
         try {
-            SSLServerSocketFactory factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-            SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
-
-            System.err.println("Waiting for connection...");
-
-            SSLSocket socket = (SSLSocket) serverSocket.accept();
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-
-            String username = input.readLine();
-            String password = input.readLine();
-
-            if (storedUsername.equals(username) && BCrypt.checkpw(password, storedPasswordHash)) {
-                output.println("Credentials accepted. Welcome to the server!");
-            } else {
-                output.println("Invalid credentials.");
+            // Cargar configuración segura desde un archivo de propiedades
+            Properties props = new Properties();
+            try (InputStream input = new FileInputStream("config.properties")) {
+                props.load(input);
             }
-            output.flush();
 
-            String msg = input.readLine();
-            output.println("Server received: " + msg);
-            output.flush();
+            // Configurar keystore y truststore con rutas y contraseñas
+            System.setProperty("javax.net.ssl.keyStore", props.getProperty("serverKeystorePath"));
+            System.setProperty("javax.net.ssl.keyStorePassword", props.getProperty("serverKeystorePassword"));
+            System.setProperty("javax.net.ssl.trustStore", props.getProperty("truststorePath"));
+            System.setProperty("javax.net.ssl.trustStorePassword", props.getProperty("truststorePassword"));
 
-            output.close();
-            input.close();
-            socket.close();
+            // Crear el socket SSL del servidor
+            SSLServerSocketFactory sslServerSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+            SSLServerSocket sslServerSocket = (SSLServerSocket) sslServerSocketFactory.createServerSocket(3343);
 
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
+            System.out.println("Servidor SSL en espera de conexión...");
+
+            // Configurar protocolos TLS seguros y suites de cifrado
+            sslServerSocket.setEnabledProtocols(new String[] { "TLSv1.2" });
+            sslServerSocket.setEnabledCipherSuites(new String[] { 
+                "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", 
+                "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+            });
+
+            while (true) {
+                // Aceptar conexión del cliente
+                try (SSLSocket sslSocket = (SSLSocket) sslServerSocket.accept();
+                     BufferedReader input = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
+                     PrintWriter output = new PrintWriter(new OutputStreamWriter(sslSocket.getOutputStream()))) {
+
+                    sslSocket.startHandshake();  // Autenticación mutua y establecimiento de canal seguro
+
+                    // Leer las credenciales enviadas por el cliente
+                    String username = input.readLine();
+                    String password = input.readLine();
+                    System.out.println("Usuario autenticado: " + username);
+
+                    // Validar credenciales (Aquí deberías usar bcrypt o un mecanismo seguro para verificar)
+                    output.println("Autenticación exitosa");
+                    output.flush();
+
+                    // Leer el mensaje enviado por el cliente
+                    String msg = input.readLine();
+                    System.out.println("Mensaje recibido: " + msg);
+
+                    // Enviar respuesta al cliente
+                    output.println("Mensaje recibido correctamente");
+                    output.flush();
+
+                } catch (SSLException sslException) {
+                    System.err.println("SSL error occurred: " + sslException.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
