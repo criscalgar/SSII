@@ -58,6 +58,7 @@ def registrar_tiempo(mensaje):
         f.write(mensaje + "\n")
 
 # Función para realizar transacciones reales
+# Función para realizar transacciones reales
 def enviar_transaccion(accion, nombre_usuario, clave, destinatario, cantidad, modificar=False, replay=False):
     HOST = "127.0.0.1"
     PORT = 8080
@@ -74,7 +75,10 @@ def enviar_transaccion(accion, nombre_usuario, clave, destinatario, cantidad, mo
 
             if modificar:
                 # Simular un ataque MITM modificando el mensaje
-                datos = f"{accion},{nombre_usuario},{clave},{nonce}MOD,{mac}"
+                # Aquí se modifica el mensaje original (por ejemplo, cambiando el destinatario)
+                mensaje_modificado = f"{accion},{nombre_usuario},{clave},{nonce},MODIFICADO"  # Cambio en el mensaje
+                mac_modificado = generar_mac(mensaje_modificado)  # Se recalcula el MAC del mensaje modificado
+                datos = f"{mensaje_modificado},{mac_modificado}"  # Enviar el mensaje modificado y su MAC incorrecto
 
             if replay:
                 # Simular un replay atacando el mismo mensaje varias veces
@@ -113,6 +117,7 @@ def enviar_transaccion(accion, nombre_usuario, clave, destinatario, cantidad, mo
     except Exception as e:
         print(f"Error inesperado: {e}")
         registrar_mensaje(f"Error inesperado: {e}")
+
 
 # Función para realizar pruebas MITM y Replay, y registrar los tiempos
 def realizar_pruebas(num_pruebas):

@@ -97,14 +97,15 @@ def verificar_mac(mensaje, mac, nonce, nonce_list):
     
     # Verificar si el mensaje ha sido alterado (MITM)
     if mac != mac_calculado:
-        registrar_en_log("Error: MAC no coincide, mensaje alterado (posible ataque MITM).", fallo=True)
+        registrar_en_log("FALLO MITM: MAC no coincide, mensaje alterado (posible ataque MITM).", fallo=True)
         return False
     
     # Verificar si el nonce ya ha sido utilizado (replay attack)
     if nonce in nonce_list:
-        registrar_en_log("Error: Nonce repetido, posible ataque de repetición (replay).", fallo=True)
+        registrar_en_log("FALLO REPLAY: Nonce repetido, posible ataque de repetición (replay).", fallo=True)
         return False
 
+    # Agregar nonce a la lista si la verificación es exitosa
     nonce_list.append(nonce)
     return True
 
@@ -188,6 +189,11 @@ try:
                                 cantidad = float(conn.recv(1024).decode('utf-8'))
                                 transaccion_id = registrar_transaccion(nombre_usuario, destinatario, cantidad, db_conn)
                                 respuesta = f"Transferencia #{transaccion_id} registrada exitosamente."
+                                
+                                # Aquí eliminamos el nonce después de una transacción exitosa
+                                if nonce in nonce_list:
+                                    nonce_list.remove(nonce)
+                                    
                                 conn.sendall(respuesta.encode('utf-8'))
                             except ValueError:
                                 respuesta = "Error: La cantidad ingresada no es válida."
