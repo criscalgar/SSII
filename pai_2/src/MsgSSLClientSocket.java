@@ -7,10 +7,8 @@ import java.io.PrintWriter;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import javax.net.ssl.*;
-import javax.swing.JOptionPane; // Asegúrate de importar JOptionPane
-import org.mindrot.jbcrypt.BCrypt; // Asegúrate de que esta línea esté presente
-import java.sql.*; // Asegúrate de importar las clases SQL
-import java.util.logging.*; // Importar logging
+import javax.swing.JOptionPane;
+import java.util.logging.*;
 
 public class MsgSSLClientSocket {
     private static final Logger logger = Logger.getLogger(MsgSSLClientSocket.class.getName());
@@ -47,7 +45,7 @@ public class MsgSSLClientSocket {
                 trustStore.load(trustStoreStream, trustStorePassword.toCharArray());
             }
 
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.3"); // Asegúrate de usar TLS 1.3
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(trustStore);
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
@@ -77,8 +75,11 @@ public class MsgSSLClientSocket {
 
                 if (response != null && response.equals("Autenticación exitosa.")) {
                     authenticated = true; // Cambia el estado a autenticado
-                    String message;
 
+                    // Leer el usuario destino
+                    String destinationUser = JOptionPane.showInputDialog("Ingresa el usuario destino:");
+
+                    String message;
                     // Bucle para pedir el mensaje hasta que no esté vacío
                     do {
                         message = JOptionPane.showInputDialog("Ingresa tu mensaje:");
@@ -87,16 +88,16 @@ public class MsgSSLClientSocket {
                         }
                     } while (message == null || message.trim().isEmpty());
 
-                    output.println(message); // Envía el mensaje al servidor
+                    // Enviar el mensaje al servidor con el formato: "MENSAJE:usuarioFuente:usuarioDestino:mensaje"
+                    output.println("MENSAJE:" + username + ":" + destinationUser + ":" + message); 
+                    
                     // Leer respuesta del servidor sobre el mensaje
                     String messageResponse = input.readLine();
                     JOptionPane.showMessageDialog(null, messageResponse);
                 } else {
-                    // Si la autenticación falla, preguntar si desea intentar de nuevo
-                    int option = JOptionPane.showConfirmDialog(null, "La contraseña es incorrecta. ¿Deseas intentar de nuevo?", "Error de autenticación", JOptionPane.YES_NO_OPTION);
-                    if (option == JOptionPane.NO_OPTION) {
-                        break; // Salir del proceso
-                    }
+                    // Si la autenticación falla, se cierra la conexión
+                    JOptionPane.showMessageDialog(null, "La autenticación falló. Cerrando la conexión.");
+                    break; 
                 }
             }
 

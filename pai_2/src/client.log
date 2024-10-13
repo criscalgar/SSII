@@ -36,3 +36,49 @@ java.net.SocketException: Connection reset
 	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:436)
 	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:76)
 
+oct 13, 2024 1:56:38 P. M. MsgSSLClientSocket main
+SEVERE: Error en el cliente
+java.io.FileNotFoundException: clienttruststore.jks (El sistema no puede encontrar el archivo especificado)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:159)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:41)
+
+oct 13, 2024 1:57:52 P. M. MsgSSLClientSocket main
+SEVERE: Error en el cliente
+java.io.FileNotFoundException: truestore.jks (El sistema no puede encontrar el archivo especificado)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:159)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:42)
+
+oct 13, 2024 1:58:33 P. M. MsgSSLClientSocket main
+SEVERE: Error en el cliente
+java.io.FileNotFoundException: trustore.jks (El sistema no puede encontrar el archivo especificado)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:159)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:42)
+
+oct 13, 2024 1:59:20 P. M. MsgSSLClientSocket main
+SEVERE: Error en el cliente
+java.io.IOException: keystore password was incorrect
+	at java.base/sun.security.pkcs12.PKCS12KeyStore.engineLoad(PKCS12KeyStore.java:2112)
+	at java.base/sun.security.util.KeyStoreDelegator.engineLoad(KeyStoreDelegator.java:228)
+	at java.base/java.security.KeyStore.load(KeyStore.java:1499)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:43)
+Caused by: java.security.UnrecoverableKeyException: failed to decrypt safe contents entry: javax.crypto.BadPaddingException: Given final block not properly padded. Such issues can arise if a bad key is used during decryption.
+	... 4 more
+
+oct 13, 2024 2:12:21 P. M. MsgSSLClientSocket main
+SEVERE: Error en el cliente
+java.io.FileNotFoundException: clienttruststore.jks (El sistema no puede encontrar el archivo especificado)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:159)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:41)
+

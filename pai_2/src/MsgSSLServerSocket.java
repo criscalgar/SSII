@@ -38,7 +38,7 @@ public class MsgSSLServerSocket {
                 keyStore.load(keyStoreStream, keyStorePassword.toCharArray());
             }
 
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
             sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
@@ -84,15 +84,12 @@ public class MsgSSLServerSocket {
                             if (message == null || message.trim().isEmpty()) {
                                 output.println("El mensaje está vacío."); 
                             } else {
+                                // Almacena el mensaje (aquí debes implementar la lógica para almacenar el mensaje)
                                 output.println("Mensaje recibido: " + message);
                             }
                         } else {
-                            output.println("Autenticación fallida. ¿Desea intentar de nuevo? (S/N)");
-                            String response = input.readLine();
-                            if (response != null && response.trim().equalsIgnoreCase("N")) {
-                                output.println("Proceso finalizado.");
-                                break; // Salir del bucle y cerrar la conexión
-                            }
+                            output.println("Autenticación fallida. Conexión cerrada."); // Mensaje de error
+                            break; // Salir del bucle y cerrar la conexión
                         }
                     } else {
                         output.println("Formato de credenciales incorrecto. Por favor, envíe de nuevo.");
