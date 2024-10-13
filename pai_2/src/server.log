@@ -220,3 +220,98 @@ java.net.SocketException: Connection reset
 	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:55)
 	at java.base/java.lang.Thread.run(Thread.java:1575)
 
+oct 13, 2024 6:36:23 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 6:36:44 P. M. MsgSSLServerSocket storeMessage
+SEVERE: Error al almacenar el mensaje
+java.sql.SQLSyntaxErrorException: Unknown column 'source_user' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1165)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1100)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1466)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1083)
+	at MsgSSLServerSocket.storeMessage(MsgSSLServerSocket.java:190)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:98)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:55)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+oct 13, 2024 6:49:09 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 6:56:13 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 6:58:14 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 6:59:10 P. M. MsgSSLServerSocket storeMessage
+SEVERE: Error al almacenar el mensaje
+java.sql.SQLSyntaxErrorException: Unknown column 'source_user' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1165)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1100)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1466)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1083)
+	at MsgSSLServerSocket.storeMessage(MsgSSLServerSocket.java:190)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:98)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:55)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+oct 13, 2024 7:09:48 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 7:16:25 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 7:18:03 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 7:18:32 P. M. MsgSSLServerSocket storeMessage
+SEVERE: Error al almacenar el mensaje
+java.sql.SQLSyntaxErrorException: Unknown column 'source_user' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1165)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1100)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1466)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1083)
+	at MsgSSLServerSocket.storeMessage(MsgSSLServerSocket.java:190)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:98)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:55)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+oct 13, 2024 7:22:02 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 7:24:23 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 7:24:41 P. M. MsgSSLServerSocket storeMessage
+SEVERE: Error al almacenar el mensaje
+java.sql.SQLSyntaxErrorException: Unknown column 'source_user' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1165)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1100)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1466)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1083)
+	at MsgSSLServerSocket.storeMessage(MsgSSLServerSocket.java:190)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:98)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:55)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+oct 13, 2024 7:25:34 P. M. MsgSSLServerSocket storeMessage
+SEVERE: Error al almacenar el mensaje
+java.sql.SQLSyntaxErrorException: Unknown column 'source_user' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1165)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1100)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1466)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1083)
+	at MsgSSLServerSocket.storeMessage(MsgSSLServerSocket.java:190)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:98)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:55)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+oct 13, 2024 7:30:28 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...

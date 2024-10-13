@@ -1,4 +1,4 @@
-import java.io.BufferedReader;
+import java.io.BufferedReader; 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -72,7 +72,7 @@ public class MsgSSLServerSocket {
                 if ((line = input.readLine()) != null) {
                     String[] parts = line.split(":");
                     if (parts.length == 3 && "CREDENTIALS".equals(parts[0])) {
-                        String username = parts[1].trim().toLowerCase().replaceAll("\\s+", ""); 
+                        String username = parts[1].trim().toLowerCase(); // Convertir a minúsculas
                         String password = parts[2];
 
                         // Verificar si el usuario y la contraseña son correctos
@@ -145,14 +145,14 @@ public class MsgSSLServerSocket {
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             for (String[] user : initialUsers) {
-                String username = user[0].trim().toLowerCase().replaceAll("\\s+", ""); 
+                String username = user[0]; // Mantener los espacios en blanco
                 String plainPassword = user[1];
                 String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
 
                 if (!userExists(username)) {
                     String query = "INSERT INTO usuarios (username, password) VALUES (?, ?)";
                     try (PreparedStatement statement = connection.prepareStatement(query)) {
-                        statement.setString(1, username);
+                        statement.setString(1, username.toLowerCase()); // Almacenar en minúsculas
                         statement.setString(2, hashedPassword);
                         statement.executeUpdate();
                     }
@@ -180,7 +180,7 @@ public class MsgSSLServerSocket {
     }
 
     private static void storeMessage(String sourceUser, String destinationUser, String message) {
-        String query = "INSERT INTO mensajes (source_user, destination_user, message) VALUES (?, ?, ?)"; // Cambia la tabla y columnas según tu esquema
+        String query = "INSERT INTO mensajes(user_source, user_destination, message) VALUES (?, ?, ?)"; // Cambia la tabla y columnas según tu esquema
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement statement = connection.prepareStatement(query)) {

@@ -160,3 +160,19 @@ java.net.SocketException: Connection reset
 	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:436)
 	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:72)
 
+oct 13, 2024 6:56:19 P. M. MsgSSLClientSocket main
+INFO: Conectado al servidor SSL en el puerto 3343.
+oct 13, 2024 6:56:25 P. M. MsgSSLClientSocket main
+INFO: Respuesta del servidor: Autenticación exitosa.
+oct 13, 2024 6:56:29 P. M. MsgSSLClientSocket main
+INFO: Respuesta del servidor al mensaje: Formato de mensaje incorrecto.
+oct 13, 2024 6:58:23 P. M. MsgSSLClientSocket main
+SEVERE: Error al iniciar el cliente
+java.io.IOException: keystore password was incorrect
+	at java.base/sun.security.pkcs12.PKCS12KeyStore.engineLoad(PKCS12KeyStore.java:2112)
+	at java.base/sun.security.util.KeyStoreDelegator.engineLoad(KeyStoreDelegator.java:228)
+	at java.base/java.security.KeyStore.load(KeyStore.java:1499)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:45)
+Caused by: java.security.UnrecoverableKeyException: failed to decrypt safe contents entry: javax.crypto.BadPaddingException: Given final block not properly padded. Such issues can arise if a bad key is used during decryption.
+	... 4 more
+
