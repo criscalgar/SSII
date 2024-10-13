@@ -1,4 +1,4 @@
-import java.io.BufferedReader; 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,11 +12,12 @@ import java.sql.*;
 import java.util.logging.*;
 
 public class MsgSSLServerSocket {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/pai_2"; // Cambia por tu URL
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/pai_2"; // Cambia por tu URL de la base de datos
     private static final String DB_USER = "root"; // Cambia por tu usuario
     private static final String DB_PASSWORD = "root"; // Cambia por tu contraseña
     private static final Logger logger = Logger.getLogger(MsgSSLServerSocket.class.getName());
 
+    // Inicialización del logger
     static {
         try {
             FileHandler fh = new FileHandler("server.log", true);
@@ -33,23 +34,28 @@ public class MsgSSLServerSocket {
             String keyStorePath = "serverkeystore.jks"; 
             String keyStorePassword = "serverpassword"; 
 
+            // Cargar el keystore del servidor
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             try (FileInputStream keyStoreStream = new FileInputStream(keyStorePath)) {
                 keyStore.load(keyStoreStream, keyStorePassword.toCharArray());
             }
 
+            // Configurar el contexto SSL
             SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
             sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
 
+            // Crear un socket SSL en el servidor
             SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
             SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
             
             logger.info("Servidor SSL escuchando en el puerto 3343...");
 
+            // Registrar usuarios iniciales
             registerInitialUsers();
 
+            // Esperar a que los clientes se conecten
             while (true) {
                 SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
                 new Thread(() -> handleClient(clientSocket)).start();
@@ -60,52 +66,61 @@ public class MsgSSLServerSocket {
         }
     }
 
+    // Manejar la conexión del cliente
     private static void handleClient(SSLSocket clientSocket) {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter output = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true)) {
 
             boolean authenticated = false;
 
+            // Proceso de autenticación
             while (!authenticated) {
-                // Leer las credenciales enviadas por el cliente
                 String line;
                 if ((line = input.readLine()) != null) {
                     String[] parts = line.split(":");
+
+                    // Autenticación del cliente
                     if (parts.length == 3 && "CREDENTIALS".equals(parts[0])) {
                         String username = parts[1].trim().toLowerCase(); // Convertir a minúsculas
                         String password = parts[2];
 
-                        // Verificar si el usuario y la contraseña son correctos
+                        // Verificar si las credenciales son correctas
                         if (authenticate(username, password)) {
                             authenticated = true;
                             output.println("Autenticación exitosa.");
-
-                            String message = "";
-                            while (message == null || message.trim().isEmpty()) {
-                                // Leer el mensaje del cliente
-                                message = input.readLine();
-                                if (message == null || message.trim().isEmpty()) {
-                                    output.println("El mensaje está vacío. Por favor, repita su mensaje."); 
-                                }
-                            }
-
-                            String[] messageParts = message.split(":");
-                            if (messageParts.length == 4 && "MENSAJE".equals(messageParts[0])) {
-                                String sourceUser = messageParts[1]; // usuario fuente
-                                String destinationUser = messageParts[2]; // usuario destino
-                                String msgContent = messageParts[3]; // contenido del mensaje
-
-                                storeMessage(sourceUser, destinationUser, msgContent); // Almacenar el mensaje en la base de datos
-                                output.println("Mensaje recibido: " + msgContent);
-                            } else {
-                                output.println("Formato de mensaje incorrecto.");
-                            }
                         } else {
-                            output.println("Autenticación fallida. Por favor, vuelva a ingresar sus credenciales."); // Mensaje de error
+                            output.println("Autenticación fallida. Por favor, vuelva a ingresar sus credenciales.");
                         }
-                    } else {
-                        output.println("Formato de credenciales incorrecto. Por favor, envíe de nuevo.");
                     }
+                }
+            }
+
+            // Verificar el usuario destino y manejar el envío de mensajes
+            String line;
+            while ((line = input.readLine()) != null) {
+                String[] parts = line.split(":");
+
+                // Verificación del usuario destino
+                if (parts.length == 2 && "VERIFY_USER".equals(parts[0])) {
+                    String destinationUser = parts[1].trim().toLowerCase();
+                    if (userExists(destinationUser)) {
+                        output.println("Usuario existe");
+                    } else {
+                        output.println("Usuario no existe");
+                    }
+                }
+                
+                // Recepción y almacenamiento de mensajes
+                else if (parts.length == 4 && "MENSAJE".equals(parts[0])) {
+                    String sourceUser = parts[1]; // Usuario que envía
+                    String destinationUser = parts[2]; // Usuario destino
+                    String msgContent = parts[3]; // Contenido del mensaje
+
+                    // Guardar el mensaje en la base de datos
+                    storeMessage(sourceUser, destinationUser, msgContent);
+                    output.println("Mensaje recibido: " + msgContent);
+                } else {
+                    output.println("Formato de mensaje incorrecto.");
                 }
             }
 
@@ -120,6 +135,7 @@ public class MsgSSLServerSocket {
         }
     }
 
+    // Método para autenticar al usuario
     private static boolean authenticate(String username, String password) {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String query = "SELECT password FROM usuarios WHERE LOWER(username) = ?";
@@ -128,7 +144,7 @@ public class MsgSSLServerSocket {
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     String hashedPassword = resultSet.getString("password");
-                    return BCrypt.checkpw(password, hashedPassword); 
+                    return BCrypt.checkpw(password, hashedPassword);
                 }
             }
         } catch (SQLException e) {
@@ -137,6 +153,24 @@ public class MsgSSLServerSocket {
         return false;
     }
 
+    // Método para verificar si el usuario destino existe
+    private static boolean userExists(String username) {
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String query = "SELECT COUNT(*) FROM usuarios WHERE LOWER(username) = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, username);
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al verificar existencia de usuario", e);
+        }
+        return false;
+    }
+
+    // Método para registrar los usuarios iniciales
     private static void registerInitialUsers() {
         String[][] initialUsers = {
             {"cristina calderon garcia", "123456"}, 
@@ -151,7 +185,7 @@ public class MsgSSLServerSocket {
                 String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
 
                 if (!userExists(username)) {
-                    String query = "INSERT INTO usuarios (username, password) VALUES (?, ?)";
+                    String query = "INSERT INTO usuarios(username, password) VALUES (?, ?)";
                     try (PreparedStatement statement = connection.prepareStatement(query)) {
                         statement.setString(1, username.toLowerCase()); // Almacenar en minúsculas
                         statement.setString(2, hashedPassword);
@@ -167,22 +201,7 @@ public class MsgSSLServerSocket {
         }
     }
 
-    private static boolean userExists(String username) {
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT COUNT(*) FROM usuarios WHERE LOWER(username) = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, username);
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    return resultSet.getInt(1) > 0; 
-                }
-            }
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error al verificar existencia de usuario", e);
-        }
-        return false;
-    }
-
+    // Método para almacenar el mensaje en la base de datos
     private static void storeMessage(String sourceUser, String destinationUser, String message) {
         String query = "INSERT INTO mensajes(user_source, user_destination, message) VALUES (?, ?, ?)"; // Cambia la tabla y columnas según tu esquema
 
