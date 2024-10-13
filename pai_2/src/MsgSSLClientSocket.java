@@ -56,21 +56,51 @@ public class MsgSSLClientSocket {
 
             SSLSocketFactory factory = sslContext.getSocketFactory();
             SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
-            
+
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-            // Leer credenciales del usuario
-            String username = JOptionPane.showInputDialog("Ingresa tu nombre y apellidos:");
-            String password = JOptionPane.showInputDialog("Ingresa tu contraseña:");
+            boolean authenticated = false;
 
-            // Enviar credenciales al servidor
-            output.println("CREDENTIALS:" + username + ":" + password);
-            
-            // Leer respuesta del servidor
-            String response = input.readLine();
-            JOptionPane.showMessageDialog(null, response);
+            // Bucle para manejar la autenticación
+            while (!authenticated) {
+                // Leer credenciales del usuario
+                String username = JOptionPane.showInputDialog("Ingresa tu nombre y apellidos:");
+                String password = JOptionPane.showInputDialog("Ingresa tu contraseña:");
 
+                // Enviar credenciales al servidor
+                output.println("CREDENTIALS:" + username + ":" + password);
+
+                // Leer respuesta del servidor
+                String response = input.readLine();
+                JOptionPane.showMessageDialog(null, response);
+
+                if (response != null && response.equals("Autenticación exitosa.")) {
+                    authenticated = true; // Cambia el estado a autenticado
+                    String message;
+
+                    // Bucle para pedir el mensaje hasta que no esté vacío
+                    do {
+                        message = JOptionPane.showInputDialog("Ingresa tu mensaje:");
+                        if (message == null || message.trim().isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Mensaje vacío, por favor intenta de nuevo.");
+                        }
+                    } while (message == null || message.trim().isEmpty());
+
+                    output.println(message); // Envía el mensaje al servidor
+                    // Leer respuesta del servidor sobre el mensaje
+                    String messageResponse = input.readLine();
+                    JOptionPane.showMessageDialog(null, messageResponse);
+                } else {
+                    // Si la autenticación falla, preguntar si desea intentar de nuevo
+                    int option = JOptionPane.showConfirmDialog(null, "La contraseña es incorrecta. ¿Deseas intentar de nuevo?", "Error de autenticación", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.NO_OPTION) {
+                        break; // Salir del proceso
+                    }
+                }
+            }
+
+            socket.close();
         } catch (IOException | GeneralSecurityException e) {
             logger.log(Level.SEVERE, "Error en el cliente", e);
             JOptionPane.showMessageDialog(null, "Error en la conexión: " + e.getMessage());

@@ -60,3 +60,41 @@ java.sql.SQLSyntaxErrorException: Table 'pi_2.usuarios' doesn't exist
 	at MsgSSLServerSocket.registerInitialUsers(MsgSSLServerSocket.java:135)
 	at MsgSSLServerSocket.main(MsgSSLServerSocket.java:54)
 
+oct 13, 2024 1:00:35 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 1:13:38 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 1:18:59 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 1:23:15 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 1:26:26 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 1:28:11 P. M. MsgSSLServerSocket handleClient
+SEVERE: Error al manejar el cliente
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:489)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:483)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70)
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1462)
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1068)
+	at java.base/sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:350)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:393)
+	at java.base/sun.nio.cs.StreamDecoder.lockedRead(StreamDecoder.java:217)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:171)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:190)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:160)
+	at java.base/java.io.BufferedReader.implReadLine(BufferedReader.java:370)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:347)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:436)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:72)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:55)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+oct 13, 2024 1:28:41 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...

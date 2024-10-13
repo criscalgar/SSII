@@ -7,9 +7,9 @@ import java.io.PrintWriter;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import javax.net.ssl.*;
-import org.mindrot.jbcrypt.BCrypt; // Asegúrate de que esta línea esté presente
-import java.sql.*; // Asegúrate de importar las clases SQL
-import java.util.logging.*; // Importar logging
+import org.mindrot.jbcrypt.BCrypt;
+import java.sql.*; 
+import java.util.logging.*;
 
 public class MsgSSLServerSocket {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/pai_2"; // Cambia por tu URL
@@ -17,7 +17,6 @@ public class MsgSSLServerSocket {
     private static final String DB_PASSWORD = "root"; // Cambia por tu contraseña
     private static final Logger logger = Logger.getLogger(MsgSSLServerSocket.class.getName());
 
-    // Inicializa el logger
     static {
         try {
             FileHandler fh = new FileHandler("server.log", true);
@@ -31,9 +30,8 @@ public class MsgSSLServerSocket {
 
     public static void main(String[] args) {
         try {
-            // Cargar el keystore del servidor
-            String keyStorePath = "serverkeystore.jks"; // Ruta al server keystore
-            String keyStorePassword = "serverpassword"; // Cambia por tu contraseña
+            String keyStorePath = "serverkeystore.jks"; 
+            String keyStorePassword = "serverpassword"; 
 
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             try (FileInputStream keyStoreStream = new FileInputStream(keyStorePath)) {
@@ -50,7 +48,6 @@ public class MsgSSLServerSocket {
             
             logger.info("Servidor SSL escuchando en el puerto 3343...");
 
-            // Registrar usuarios iniciales en la base de datos
             registerInitialUsers();
 
             while (true) {
@@ -65,24 +62,41 @@ public class MsgSSLServerSocket {
 
     private static void handleClient(SSLSocket clientSocket) {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             PrintWriter output = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+             PrintWriter output = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true)) {
 
-            // Leer las credenciales enviadas por el cliente
-            String line;
-            if ((line = input.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length == 3 && "CREDENTIALS".equals(parts[0])) {
-                    String username = parts[1].trim().toLowerCase().replaceAll("\\s+", ""); // Normalizar el nombre de usuario
-                    String password = parts[2];
+            boolean authenticated = false;
 
-                    // Verificar las credenciales
-                    if (authenticate(username, password)) {
-                        output.println("Autenticación exitosa.");
+            while (!authenticated) {
+                // Leer las credenciales enviadas por el cliente
+                String line;
+                if ((line = input.readLine()) != null) {
+                    String[] parts = line.split(":");
+                    if (parts.length == 3 && "CREDENTIALS".equals(parts[0])) {
+                        String username = parts[1].trim().toLowerCase().replaceAll("\\s+", ""); 
+                        String password = parts[2];
+
+                        if (authenticate(username, password)) {
+                            authenticated = true;
+                            output.println("Autenticación exitosa.");
+
+                            // Leer el mensaje del cliente
+                            String message = input.readLine();
+                            if (message == null || message.trim().isEmpty()) {
+                                output.println("El mensaje está vacío."); 
+                            } else {
+                                output.println("Mensaje recibido: " + message);
+                            }
+                        } else {
+                            output.println("Autenticación fallida. ¿Desea intentar de nuevo? (S/N)");
+                            String response = input.readLine();
+                            if (response != null && response.trim().equalsIgnoreCase("N")) {
+                                output.println("Proceso finalizado.");
+                                break; // Salir del bucle y cerrar la conexión
+                            }
+                        }
                     } else {
-                        output.println("Autenticación fallida.");
+                        output.println("Formato de credenciales incorrecto. Por favor, envíe de nuevo.");
                     }
-                } else {
-                    output.println("Formato de credenciales incorrecto.");
                 }
             }
 
@@ -99,13 +113,13 @@ public class MsgSSLServerSocket {
 
     private static boolean authenticate(String username, String password) {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT password FROM usuarios WHERE LOWER(username) = ?"; // Consulta normalizada
+            String query = "SELECT password FROM usuarios WHERE LOWER(username) = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     String hashedPassword = resultSet.getString("password");
-                    return BCrypt.checkpw(password, hashedPassword); // Verifica la contraseña
+                    return BCrypt.checkpw(password, hashedPassword); 
                 }
             }
         } catch (SQLException e) {
@@ -116,17 +130,16 @@ public class MsgSSLServerSocket {
 
     private static void registerInitialUsers() {
         String[][] initialUsers = {
-            {"cristina calderon garcia", "123456"}, // Cambia por la contraseña deseada
-            {"blanca garcia alonso", "123456"} // Cambia por la contraseña deseada
+            {"cristina calderon garcia", "123456"}, 
+            {"blanca garcia alonso", "123456"} 
         };
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             for (String[] user : initialUsers) {
-                String username = user[0].trim().toLowerCase().replaceAll("\\s+", ""); // Normalizar el nombre de usuario
+                String username = user[0].trim().toLowerCase().replaceAll("\\s+", ""); 
                 String plainPassword = user[1];
                 String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
 
-                // Comprobar si el usuario ya existe
                 if (!userExists(username)) {
                     String query = "INSERT INTO usuarios (username, password) VALUES (?, ?)";
                     try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -148,7 +161,7 @@ public class MsgSSLServerSocket {
                 statement.setString(1, username);
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
-                    return resultSet.getInt(1) > 0; // Si hay al menos un registro, el usuario existe
+                    return resultSet.getInt(1) > 0; 
                 }
             }
         } catch (SQLException e) {
