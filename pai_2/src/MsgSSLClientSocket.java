@@ -36,7 +36,7 @@ public class MsgSSLClientSocket {
                 keyStore.load(keyStoreStream, keyStorePassword.toCharArray());
             }
 
-            // Cargar el truststore
+            // Cargar el truststore del cliente
             String trustStorePath = "truststore.jks"; // Ruta al truststore
             String trustStorePassword = "trustpassword"; // Cambia por tu contraseña
 
@@ -45,66 +45,55 @@ public class MsgSSLClientSocket {
                 trustStore.load(trustStoreStream, trustStorePassword.toCharArray());
             }
 
-            SSLContext sslContext = SSLContext.getInstance("TLSv1.3"); // Asegúrate de usar TLS 1.3
+            // Configurar SSL
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(trustStore);
+
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
+
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
             SSLSocketFactory factory = sslContext.getSocketFactory();
-            SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
+            try (SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
+                 PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+                 BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+                // Autenticación
+                String username = JOptionPane.showInputDialog("Ingrese su nombre de usuario:");
+                String password = JOptionPane.showInputDialog("Ingrese su contraseña:");
 
-            boolean authenticated = false;
-
-            // Bucle para manejar la autenticación
-            while (!authenticated) {
-                // Leer credenciales del usuario
-                String username = JOptionPane.showInputDialog("Ingresa tu nombre y apellidos:");
-                String password = JOptionPane.showInputDialog("Ingresa tu contraseña:");
-
-                // Enviar credenciales al servidor
                 output.println("CREDENTIALS:" + username + ":" + password);
 
-                // Leer respuesta del servidor
                 String response = input.readLine();
-                JOptionPane.showMessageDialog(null, response);
+                System.out.println("Respuesta del servidor: " + response);
 
-                if (response != null && response.equals("Autenticación exitosa.")) {
-                    authenticated = true; // Cambia el estado a autenticado
-
-                    // Leer el usuario destino
-                    String destinationUser = JOptionPane.showInputDialog("Ingresa el usuario destino:");
-
-                    String message;
-                    // Bucle para pedir el mensaje hasta que no esté vacío
-                    do {
-                        message = JOptionPane.showInputDialog("Ingresa tu mensaje:");
-                        if (message == null || message.trim().isEmpty()) {
-                            JOptionPane.showMessageDialog(null, "Mensaje vacío, por favor intenta de nuevo.");
-                        }
-                    } while (message == null || message.trim().isEmpty());
-
-                    // Enviar el mensaje al servidor con el formato: "MENSAJE:usuarioFuente:usuarioDestino:mensaje"
-                    output.println("MENSAJE:" + username + ":" + destinationUser + ":" + message); 
+                if ("Autenticación exitosa.".equals(response)) {
+                    // Enviar mensaje
+                    String destinationUser = JOptionPane.showInputDialog("Ingrese el usuario destino:");
+                    String message = "";
                     
-                    // Leer respuesta del servidor sobre el mensaje
-                    String messageResponse = input.readLine();
-                    JOptionPane.showMessageDialog(null, messageResponse);
-                } else {
-                    // Si la autenticación falla, se cierra la conexión
-                    JOptionPane.showMessageDialog(null, "La autenticación falló. Cerrando la conexión.");
-                    break; 
-                }
-            }
+                    while (message == null || message.trim().isEmpty()) {
+                        message = JOptionPane.showInputDialog("Ingrese su mensaje:");
+                        if (message == null || message.trim().isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "El mensaje está vacío. Por favor, ingréselo de nuevo."); 
+                        }
+                    }
 
-            socket.close();
+                    output.println("MENSAJE:" + username + ":" + destinationUser + ":" + message);
+                    response = input.readLine();
+                    System.out.println("Respuesta del servidor: " + response);
+                    JOptionPane.showMessageDialog(null, response); // Mensaje recibido en una ventana de diálogo
+                } else {
+                    JOptionPane.showMessageDialog(null, "Autenticación fallida. Cerrando cliente."); // Mensaje de error
+                }
+
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Error en el cliente", e);
+            }
         } catch (IOException | GeneralSecurityException e) {
-            logger.log(Level.SEVERE, "Error en el cliente", e);
-            JOptionPane.showMessageDialog(null, "Error en la conexión: " + e.getMessage());
+            logger.log(Level.SEVERE, "Error al iniciar el cliente", e);
         }
     }
 }

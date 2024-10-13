@@ -8,7 +8,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import javax.net.ssl.*;
 import org.mindrot.jbcrypt.BCrypt;
-import java.sql.*; 
+import java.sql.*;
 import java.util.logging.*;
 
 public class MsgSSLServerSocket {
@@ -75,21 +75,33 @@ public class MsgSSLServerSocket {
                         String username = parts[1].trim().toLowerCase().replaceAll("\\s+", ""); 
                         String password = parts[2];
 
+                        // Verificar si el usuario y la contraseña son correctos
                         if (authenticate(username, password)) {
                             authenticated = true;
                             output.println("Autenticación exitosa.");
 
-                            // Leer el mensaje del cliente
-                            String message = input.readLine();
-                            if (message == null || message.trim().isEmpty()) {
-                                output.println("El mensaje está vacío."); 
+                            String message = "";
+                            while (message == null || message.trim().isEmpty()) {
+                                // Leer el mensaje del cliente
+                                message = input.readLine();
+                                if (message == null || message.trim().isEmpty()) {
+                                    output.println("El mensaje está vacío. Por favor, repita su mensaje."); 
+                                }
+                            }
+
+                            String[] messageParts = message.split(":");
+                            if (messageParts.length == 4 && "MENSAJE".equals(messageParts[0])) {
+                                String sourceUser = messageParts[1]; // usuario fuente
+                                String destinationUser = messageParts[2]; // usuario destino
+                                String msgContent = messageParts[3]; // contenido del mensaje
+
+                                storeMessage(sourceUser, destinationUser, msgContent); // Almacenar el mensaje en la base de datos
+                                output.println("Mensaje recibido: " + msgContent);
                             } else {
-                                // Almacena el mensaje (aquí debes implementar la lógica para almacenar el mensaje)
-                                output.println("Mensaje recibido: " + message);
+                                output.println("Formato de mensaje incorrecto.");
                             }
                         } else {
-                            output.println("Autenticación fallida. Conexión cerrada."); // Mensaje de error
-                            break; // Salir del bucle y cerrar la conexión
+                            output.println("Autenticación fallida. Por favor, vuelva a ingresar sus credenciales."); // Mensaje de error
                         }
                     } else {
                         output.println("Formato de credenciales incorrecto. Por favor, envíe de nuevo.");
@@ -165,5 +177,19 @@ public class MsgSSLServerSocket {
             logger.log(Level.SEVERE, "Error al verificar existencia de usuario", e);
         }
         return false;
+    }
+
+    private static void storeMessage(String sourceUser, String destinationUser, String message) {
+        String query = "INSERT INTO mensajes (source_user, destination_user, message) VALUES (?, ?, ?)"; // Cambia la tabla y columnas según tu esquema
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, sourceUser);
+            statement.setString(2, destinationUser);
+            statement.setString(3, message);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al almacenar el mensaje", e);
+        }
     }
 }
