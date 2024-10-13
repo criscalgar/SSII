@@ -140,7 +140,8 @@ public class MsgSSLServerSocket {
     private static void registerInitialUsers() {
         String[][] initialUsers = {
             {"cristina calderon garcia", "123456"}, 
-            {"blanca garcia alonso", "123456"} 
+            {"blanca garcia alonso", "123456"},
+            {"yassine nacif berrada", "123456"} 
         };
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
@@ -155,7 +156,10 @@ public class MsgSSLServerSocket {
                         statement.setString(1, username.toLowerCase()); // Almacenar en minúsculas
                         statement.setString(2, hashedPassword);
                         statement.executeUpdate();
+                        logger.info("Usuario registrado: " + username);
                     }
+                } else {
+                    logger.warning("El usuario ya existe: " + username);
                 }
             }
         } catch (SQLException e) {
