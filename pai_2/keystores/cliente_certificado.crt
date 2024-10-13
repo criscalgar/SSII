@@ -1,1 +1,0 @@
-keytool -exportcert -alias cliente -keystore clientkeystore.jks -rfc -file cliente_certificado.crt -storepass clientpassword

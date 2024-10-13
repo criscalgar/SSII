@@ -1,1 +1,0 @@
-keytool -exportcert -alias servidor -keystore serverkeystore.jks -rfc -file servidor_certificado.crt -storepass serverpassword

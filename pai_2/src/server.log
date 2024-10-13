@@ -1,0 +1,62 @@
+oct 13, 2024 12:56:08 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 12:56:08 P. M. MsgSSLServerSocket registerInitialUsers
+SEVERE: Error al registrar usuarios iniciales
+java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/pi_2
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:707)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at MsgSSLServerSocket.registerInitialUsers(MsgSSLServerSocket.java:123)
+	at MsgSSLServerSocket.main(MsgSSLServerSocket.java:54)
+
+oct 13, 2024 12:57:21 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 12:57:22 P. M. MsgSSLServerSocket userExists
+SEVERE: Error al verificar existencia de usuario
+java.sql.SQLSyntaxErrorException: Table 'pi_2.usuarios' doesn't exist
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:1055)
+	at MsgSSLServerSocket.userExists(MsgSSLServerSocket.java:149)
+	at MsgSSLServerSocket.registerInitialUsers(MsgSSLServerSocket.java:130)
+	at MsgSSLServerSocket.main(MsgSSLServerSocket.java:54)
+
+oct 13, 2024 12:57:22 P. M. MsgSSLServerSocket registerInitialUsers
+SEVERE: Error al registrar usuarios iniciales
+java.sql.SQLSyntaxErrorException: Table 'pi_2.usuarios' doesn't exist
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1165)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1100)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1466)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1083)
+	at MsgSSLServerSocket.registerInitialUsers(MsgSSLServerSocket.java:135)
+	at MsgSSLServerSocket.main(MsgSSLServerSocket.java:54)
+
+oct 13, 2024 12:59:35 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 13, 2024 12:59:36 P. M. MsgSSLServerSocket userExists
+SEVERE: Error al verificar existencia de usuario
+java.sql.SQLSyntaxErrorException: Table 'pi_2.usuarios' doesn't exist
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:1055)
+	at MsgSSLServerSocket.userExists(MsgSSLServerSocket.java:149)
+	at MsgSSLServerSocket.registerInitialUsers(MsgSSLServerSocket.java:130)
+	at MsgSSLServerSocket.main(MsgSSLServerSocket.java:54)
+
+oct 13, 2024 12:59:36 P. M. MsgSSLServerSocket registerInitialUsers
+SEVERE: Error al registrar usuarios iniciales
+java.sql.SQLSyntaxErrorException: Table 'pi_2.usuarios' doesn't exist
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:987)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1165)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1100)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1466)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1083)
+	at MsgSSLServerSocket.registerInitialUsers(MsgSSLServerSocket.java:135)
+	at MsgSSLServerSocket.main(MsgSSLServerSocket.java:54)
+
