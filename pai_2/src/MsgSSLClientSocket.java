@@ -57,7 +57,7 @@ public class MsgSSLClientSocket {
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
             SSLSocketFactory factory = sslContext.getSocketFactory();
-            try (SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
+            try (SSLSocket socket = (SSLSocket) factory.createSocket("server-0", 3343);
                  PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
                  BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 

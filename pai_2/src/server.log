@@ -14,3 +14,11 @@ oct 14, 2024 10:23:12 A. M. MsgSSLServerSocket registerInitialUsers
 WARNING: El usuario ya existe: blanca garcia alonso
 oct 14, 2024 10:23:12 A. M. MsgSSLServerSocket registerInitialUsers
 WARNING: El usuario ya existe: yassine nacif berrada
+oct 14, 2024 11:32:16 A. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 11:32:49 A. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: cristina calderon garcia
+oct 14, 2024 11:33:05 A. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: blanca garcia alonso
+oct 14, 2024 11:33:21 A. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: yassine nacif berrada

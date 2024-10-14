@@ -12,9 +12,9 @@ import java.sql.*;
 import java.util.logging.*;
 
 public class MsgSSLServerSocket {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/pai_2"; // Cambia por tu URL de la base de datos
-    private static final String DB_USER = "root"; // Cambia por tu usuario
-    private static final String DB_PASSWORD = "root"; // Cambia por tu contraseña
+    private static final String DB_URL = "jdbc:mysql://192.168.0.92:3306/pai_2"; // Cambia por tu URL de la base de datos
+    private static final String DB_USER = "ssii"; // Cambia por tu usuario
+    private static final String DB_PASSWORD = "ssii"; // Cambia por tu contraseña
     private static final Logger logger = Logger.getLogger(MsgSSLServerSocket.class.getName());
 
     // Inicialización del logger
