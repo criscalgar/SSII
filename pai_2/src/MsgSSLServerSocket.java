@@ -31,7 +31,7 @@ public class MsgSSLServerSocket {
 
     public static void main(String[] args) {
         try {
-            String keyStorePath = "serverkeystore.jks"; 
+            String keyStorePath = "certs/serverkeystore.jks"; 
             String keyStorePassword = "serverpassword"; 
 
             // Cargar el keystore del servidor

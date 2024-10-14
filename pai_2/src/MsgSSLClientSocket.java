@@ -29,7 +29,7 @@ public class MsgSSLClientSocket {
     public static void main(String[] args) {
         try {
             // Cargar el keystore del cliente
-            String keyStorePath = "clientkeystore.jks"; // Ruta al client keystore
+            String keyStorePath = "certs/clientkeystore.jks"; // Ruta al client keystore
             String keyStorePassword = "clientpassword"; // Cambia por tu contraseña
 
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -38,7 +38,7 @@ public class MsgSSLClientSocket {
             }
 
             // Cargar el truststore del cliente
-            String trustStorePath = "truststore.jks"; // Ruta al truststore
+            String trustStorePath = "certs/truststore.jks"; // Ruta al truststore
             String trustStorePassword = "trustpassword"; // Cambia por tu contraseña
 
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
