@@ -1,9 +1,0 @@
-oct 14, 2024 11:20:00 A. M. MsgSSLClientSocket main
-SEVERE: Error al iniciar el cliente
-java.io.FileNotFoundException: certs\clientkeystore.jks (The system cannot find the path specified)
-	at java.base/java.io.FileInputStream.open0(Native Method)
-	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:159)
-	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
-	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:36)
-

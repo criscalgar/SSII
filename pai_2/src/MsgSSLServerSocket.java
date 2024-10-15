@@ -1,26 +1,21 @@
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import javax.net.ssl.*;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.*;
 import java.util.logging.*;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class MsgSSLServerSocket {
-    private static final String DB_URL = "jdbc:mysql://192.168.0.92:3306/pai_2"; // Cambia por tu URL de la base de datos
-    private static final String DB_USER = "ssii"; // Cambia por tu usuario
-    private static final String DB_PASSWORD = "ssii"; // Cambia por tu contraseña
     private static final Logger logger = Logger.getLogger(MsgSSLServerSocket.class.getName());
+    private static HikariDataSource dataSource;
 
-    // Inicialización del logger
+    // Inicialización del logger y la configuración de rotación de logs
     static {
         try {
-            FileHandler fh = new FileHandler("server.log", true);
+            FileHandler fh = new FileHandler("server.log", 1024 * 1024 * 5, 5, true); // 5 MB por archivo, 5 archivos rotativos
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
@@ -31,8 +26,16 @@ public class MsgSSLServerSocket {
 
     public static void main(String[] args) {
         try {
-            String keyStorePath = "certs/serverkeystore.jks"; 
-            String keyStorePassword = "serverpassword"; 
+            // Configuración del pool de conexiones HikariCP
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/pai_2");
+            config.setUsername("root");
+            config.setPassword("root");
+            config.setMaximumPoolSize(50); // Se permite hasta 50 conexiones simultáneas
+            dataSource = new HikariDataSource(config);
+
+            String keyStorePath = "certs/serverkeystore.jks";
+            String keyStorePassword = "serverpassword";
 
             // Cargar el keystore del servidor
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -49,7 +52,7 @@ public class MsgSSLServerSocket {
             // Crear un socket SSL en el servidor
             SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
             SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
-            
+
             logger.info("Servidor SSL escuchando en el puerto 3343...");
 
             // Registrar usuarios iniciales
@@ -81,7 +84,7 @@ public class MsgSSLServerSocket {
 
                     // Autenticación del cliente
                     if (parts.length == 3 && "CREDENTIALS".equals(parts[0])) {
-                        String username = parts[1].trim().toLowerCase(); // Convertir a minúsculas
+                        String username = parts[1].trim().toLowerCase();
                         String password = parts[2];
 
                         // Verificar si las credenciales son correctas
@@ -89,13 +92,13 @@ public class MsgSSLServerSocket {
                             authenticated = true;
                             output.println("Autenticación exitosa.");
                         } else {
-                            output.println("Autenticación fallida. Por favor, vuelva a ingresar sus credenciales.");
+                            output.println("Autenticación fallida.");
                         }
                     }
                 }
             }
 
-            // Verificar el usuario destino y manejar el envío de mensajes
+            // Verificación del usuario destino y manejo de mensajes
             String line;
             while ((line = input.readLine()) != null) {
                 String[] parts = line.split(":");
@@ -109,12 +112,11 @@ public class MsgSSLServerSocket {
                         output.println("Usuario no existe");
                     }
                 }
-                
                 // Recepción y almacenamiento de mensajes
                 else if (parts.length == 4 && "MENSAJE".equals(parts[0])) {
-                    String sourceUser = parts[1]; // Usuario que envía
-                    String destinationUser = parts[2]; // Usuario destino
-                    String msgContent = parts[3]; // Contenido del mensaje
+                    String sourceUser = parts[1];
+                    String destinationUser = parts[2];
+                    String msgContent = parts[3];
 
                     // Guardar el mensaje en la base de datos
                     storeMessage(sourceUser, destinationUser, msgContent);
@@ -137,7 +139,7 @@ public class MsgSSLServerSocket {
 
     // Método para autenticar al usuario
     private static boolean authenticate(String username, String password) {
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "SELECT password FROM usuarios WHERE LOWER(username) = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
@@ -155,7 +157,7 @@ public class MsgSSLServerSocket {
 
     // Método para verificar si el usuario destino existe
     private static boolean userExists(String username) {
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "SELECT COUNT(*) FROM usuarios WHERE LOWER(username) = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, username);
@@ -170,42 +172,11 @@ public class MsgSSLServerSocket {
         return false;
     }
 
-    // Método para registrar los usuarios iniciales
-    private static void registerInitialUsers() {
-        String[][] initialUsers = {
-            {"cristina calderon garcia", "123456"}, 
-            {"blanca garcia alonso", "123456"},
-            {"yassine nacif berrada", "123456"} 
-        };
-
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            for (String[] user : initialUsers) {
-                String username = user[0]; // Mantener los espacios en blanco
-                String plainPassword = user[1];
-                String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
-
-                if (!userExists(username)) {
-                    String query = "INSERT INTO usuarios(username, password) VALUES (?, ?)";
-                    try (PreparedStatement statement = connection.prepareStatement(query)) {
-                        statement.setString(1, username.toLowerCase()); // Almacenar en minúsculas
-                        statement.setString(2, hashedPassword);
-                        statement.executeUpdate();
-                        logger.info("Usuario registrado: " + username);
-                    }
-                } else {
-                    logger.warning("El usuario ya existe: " + username);
-                }
-            }
-        } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error al registrar usuarios iniciales", e);
-        }
-    }
-
     // Método para almacenar el mensaje en la base de datos
     private static void storeMessage(String sourceUser, String destinationUser, String message) {
-        String query = "INSERT INTO mensajes(user_source, user_destination, message) VALUES (?, ?, ?)"; // Cambia la tabla y columnas según tu esquema
+        String query = "INSERT INTO mensajes(user_source, user_destination, message) VALUES (?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, sourceUser);
             statement.setString(2, destinationUser);
@@ -213,6 +184,35 @@ public class MsgSSLServerSocket {
             statement.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error al almacenar el mensaje", e);
+        }
+    }
+
+    // Método para registrar usuarios iniciales
+    private static void registerInitialUsers() {
+        String[][] initialUsers = {
+            {"cristina calderon garcia", "123456"},
+            {"blanca garcia alonso", "123456"},
+            {"yassine nacif berrada", "123456"}
+        };
+
+        try (Connection connection = dataSource.getConnection()) {
+            for (String[] user : initialUsers) {
+                String username = user[0].toLowerCase();
+                String plainPassword = user[1];
+                String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+
+                if (!userExists(username)) {
+                    String query = "INSERT INTO usuarios(username, password) VALUES (?, ?)";
+                    try (PreparedStatement statement = connection.prepareStatement(query)) {
+                        statement.setString(1, username);
+                        statement.setString(2, hashedPassword);
+                        statement.executeUpdate();
+                        logger.info("Usuario registrado: " + username);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error al registrar usuarios iniciales", e);
         }
     }
 }

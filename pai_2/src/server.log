@@ -22,3 +22,150 @@ oct 14, 2024 11:33:05 A. M. MsgSSLServerSocket registerInitialUsers
 INFO: Usuario registrado: blanca garcia alonso
 oct 14, 2024 11:33:21 A. M. MsgSSLServerSocket registerInitialUsers
 INFO: Usuario registrado: yassine nacif berrada
+oct 14, 2024 3:41:17 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 3:41:38 P. M. MsgSSLServerSocket registerInitialUsers
+SEVERE: Error al registrar usuarios iniciales
+com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:165)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:55)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:845)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:420)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:238)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:682)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at MsgSSLServerSocket.registerInitialUsers(MsgSSLServerSocket.java:181)
+	at MsgSSLServerSocket.main(MsgSSLServerSocket.java:56)
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:140)
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:156)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:79)
+	at com.mysql.cj.NativeSession.connect(NativeSession.java:140)
+	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:969)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:833)
+	... 7 more
+Caused by: java.net.ConnectException: Connection timed out: connect
+	at java.base/sun.nio.ch.Net.connect0(Native Method)
+	at java.base/sun.nio.ch.Net.connect(Net.java:589)
+	at java.base/sun.nio.ch.Net.connect(Net.java:578)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:583)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:760)
+	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:144)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:53)
+	... 10 more
+
+oct 14, 2024 3:47:25 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 3:47:25 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: cristina calderon garcia
+oct 14, 2024 3:47:26 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: blanca garcia alonso
+oct 14, 2024 3:47:26 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: yassine nacif berrada
+oct 14, 2024 3:48:06 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 3:48:06 P. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: cristina calderon garcia
+oct 14, 2024 3:48:06 P. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: blanca garcia alonso
+oct 14, 2024 3:48:06 P. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: yassine nacif berrada
+oct 14, 2024 3:49:07 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 3:49:08 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: cristina calderon garcia
+oct 14, 2024 3:49:08 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: blanca garcia alonso
+oct 14, 2024 3:49:08 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: yassine nacif berrada
+oct 14, 2024 3:54:19 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 3:54:19 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: cristina calderon garcia
+oct 14, 2024 3:54:19 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: blanca garcia alonso
+oct 14, 2024 3:54:20 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: yassine nacif berrada
+oct 14, 2024 3:56:26 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 3:56:27 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: cristina calderon garcia
+oct 14, 2024 3:56:27 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: blanca garcia alonso
+oct 14, 2024 3:56:27 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: yassine nacif berrada
+oct 14, 2024 3:58:10 P. M. MsgSSLServerSocket handleClient
+SEVERE: Error al manejar el cliente
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:489)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:483)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.decode(SSLSocketInputRecord.java:160)
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:111)
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1507)
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1422)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455)
+	at java.base/sun.security.ssl.SSLSocketImpl.ensureNegotiated(SSLSocketImpl.java:924)
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1015)
+	at java.base/sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:350)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:393)
+	at java.base/sun.nio.cs.StreamDecoder.lockedRead(StreamDecoder.java:217)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:171)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:190)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:160)
+	at java.base/java.io.BufferedReader.implReadLine(BufferedReader.java:370)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:347)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:436)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:79)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+oct 14, 2024 3:59:08 P. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 14, 2024 3:59:09 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: cristina calderon garcia
+oct 14, 2024 3:59:09 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: blanca garcia alonso
+oct 14, 2024 3:59:09 P. M. MsgSSLServerSocket registerInitialUsers
+WARNING: El usuario ya existe: yassine nacif berrada
+oct 14, 2024 4:04:35 P. M. MsgSSLServerSocket handleClient
+SEVERE: Error al manejar el cliente
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:489)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:483)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70)
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1462)
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1068)
+	at java.base/sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:350)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:393)
+	at java.base/sun.nio.cs.StreamDecoder.lockedRead(StreamDecoder.java:217)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:171)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:190)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:160)
+	at java.base/java.io.BufferedReader.implReadLine(BufferedReader.java:370)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:347)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:436)
+	at MsgSSLServerSocket.handleClient(MsgSSLServerSocket.java:100)
+	at MsgSSLServerSocket.lambda$main$0(MsgSSLServerSocket.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+

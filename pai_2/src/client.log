@@ -1,0 +1,66 @@
+oct 14, 2024 3:41:41 P. M. MsgSSLHeadlessClienteSocket main
+SEVERE: Error en la conexión del cliente
+java.net.UnknownHostException: server-0
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:760)
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
+	at java.base/sun.security.ssl.SSLSocketImpl.<init>(SSLSocketImpl.java:163)
+	at java.base/sun.security.ssl.SSLSocketFactoryImpl.createSocket(SSLSocketFactoryImpl.java:86)
+	at MsgSSLHeadlessClienteSocket.main(MsgSSLHeadlessClienteSocket.java:56)
+
+oct 14, 2024 3:48:15 P. M. MsgSSLHeadlessClienteSocket main
+SEVERE: Error en la conexión del cliente
+java.net.UnknownHostException: server-0
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:760)
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
+	at java.base/sun.security.ssl.SSLSocketImpl.<init>(SSLSocketImpl.java:163)
+	at java.base/sun.security.ssl.SSLSocketFactoryImpl.createSocket(SSLSocketFactoryImpl.java:86)
+	at MsgSSLHeadlessClienteSocket.main(MsgSSLHeadlessClienteSocket.java:56)
+
+oct 14, 2024 3:49:23 P. M. MsgSSLClientSocket main
+SEVERE: Error en la conexión del cliente
+java.net.UnknownHostException: server-0
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:760)
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
+	at java.base/sun.security.ssl.SSLSocketImpl.<init>(SSLSocketImpl.java:163)
+	at java.base/sun.security.ssl.SSLSocketFactoryImpl.createSocket(SSLSocketFactoryImpl.java:86)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:60)
+
+oct 14, 2024 3:54:38 P. M. MsgSSLHeadlessClienteSocket main
+SEVERE: Error en la conexión del cliente
+java.net.UnknownHostException: server-0
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:760)
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
+	at java.base/sun.security.ssl.SSLSocketImpl.<init>(SSLSocketImpl.java:163)
+	at java.base/sun.security.ssl.SSLSocketFactoryImpl.createSocket(SSLSocketFactoryImpl.java:86)
+	at MsgSSLHeadlessClienteSocket.main(MsgSSLHeadlessClienteSocket.java:56)
+
+oct 14, 2024 4:00:11 P. M. MsgSSLClientSocket main
+SEVERE: Error en la conexión del cliente
+java.net.UnknownHostException: server-0
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:760)
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
+	at java.base/sun.security.ssl.SSLSocketImpl.<init>(SSLSocketImpl.java:163)
+	at java.base/sun.security.ssl.SSLSocketFactoryImpl.createSocket(SSLSocketFactoryImpl.java:86)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:60)
+
+oct 14, 2024 4:01:12 P. M. MsgSSLClientSocket main
+SEVERE: Error en la conexión del cliente
+java.net.UnknownHostException: server-0
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:567)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:760)
+	at java.base/sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304)
+	at java.base/sun.security.ssl.SSLSocketImpl.<init>(SSLSocketImpl.java:163)
+	at java.base/sun.security.ssl.SSLSocketFactoryImpl.createSocket(SSLSocketFactoryImpl.java:86)
+	at MsgSSLClientSocket.main(MsgSSLClientSocket.java:60)
+

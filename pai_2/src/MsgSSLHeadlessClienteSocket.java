@@ -5,15 +5,14 @@ import java.util.Scanner;
 import java.util.logging.*;
 import javax.net.ssl.*;
 
-
 public class MsgSSLHeadlessClienteSocket {
 
     private static final Logger logger = Logger.getLogger(MsgSSLHeadlessClienteSocket.class.getName());
 
-    // Inicialización del logger
+    // Inicialización del logger con rotación de logs
     static {
         try {
-            FileHandler fh = new FileHandler("client.log", true);
+            FileHandler fh = new FileHandler("client.log", 1024 * 1024 * 5, 5, true); // 5 MB por archivo, 5 archivos rotativos
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
@@ -53,7 +52,7 @@ public class MsgSSLHeadlessClienteSocket {
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
             SSLSocketFactory factory = sslContext.getSocketFactory();
-            try (SSLSocket socket = (SSLSocket) factory.createSocket("server-0", 3343);
+            try (SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
                  PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
                  BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
