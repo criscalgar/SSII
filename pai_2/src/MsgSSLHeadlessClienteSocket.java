@@ -43,6 +43,7 @@ public class MsgSSLHeadlessClienteSocket {
 
             // Configurar SSL
             SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
+
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(trustStore);
 
@@ -55,6 +56,13 @@ public class MsgSSLHeadlessClienteSocket {
             try (SSLSocket socket = (SSLSocket) factory.createSocket("localhost", 3343);
                  PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
                  BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+                // Configurar Cipher Suites para TLSv1.3
+                socket.setEnabledCipherSuites(new String[]{
+                    "TLS_AES_128_GCM_SHA256",
+                    "TLS_AES_256_GCM_SHA384",
+                    "TLS_CHACHA20_POLY1305_SHA256"
+                });
 
                 // Validación de nombre de usuario
                 String username = null;

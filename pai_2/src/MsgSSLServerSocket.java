@@ -31,7 +31,7 @@ public class MsgSSLServerSocket {
             config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/pai_2");
             config.setUsername("root");
             config.setPassword("root");
-            config.setMaximumPoolSize(50); // Se permite hasta 50 conexiones simultáneas
+            config.setMaximumPoolSize(300); // Se permite hasta 300 conexiones simultáneas
             dataSource = new HikariDataSource(config);
 
             String keyStorePath = "certs/serverkeystore.jks";
@@ -52,6 +52,13 @@ public class MsgSSLServerSocket {
             // Crear un socket SSL en el servidor
             SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
             SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(3343);
+
+            // Configurar Cipher Suites para TLSv1.3
+            serverSocket.setEnabledCipherSuites(new String[]{
+                "TLS_AES_128_GCM_SHA256",
+                "TLS_AES_256_GCM_SHA384",
+                "TLS_CHACHA20_POLY1305_SHA256"
+            });
 
             logger.info("Servidor SSL escuchando en el puerto 3343...");
 
@@ -192,7 +199,8 @@ public class MsgSSLServerSocket {
         String[][] initialUsers = {
             {"cristina calderon garcia", "123456"},
             {"blanca garcia alonso", "123456"},
-            {"yassine nacif berrada", "123456"}
+            {"yassine nacif berrada", "123456"},
+            {"testuser", "testpassword"}
         };
 
         try (Connection connection = dataSource.getConnection()) {
