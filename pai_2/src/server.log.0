@@ -328,3 +328,15 @@ oct 20, 2024 5:46:30 P. M. MsgSSLServerSocket registerInitialUsers
 INFO: Usuario registrado: yassine nacif berrada
 oct 20, 2024 5:46:30 P. M. MsgSSLServerSocket registerInitialUsers
 INFO: Usuario registrado: testuser
+oct 21, 2024 9:51:22 A. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 21, 2024 9:52:25 A. M. MsgSSLServerSocket main
+INFO: Servidor SSL escuchando en el puerto 3343...
+oct 21, 2024 9:52:26 A. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: cristina calderon garcia
+oct 21, 2024 9:52:26 A. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: blanca garcia alonso
+oct 21, 2024 9:52:26 A. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: yassine nacif berrada
+oct 21, 2024 9:52:26 A. M. MsgSSLServerSocket registerInitialUsers
+INFO: Usuario registrado: testuser
