@@ -28,7 +28,7 @@ public class MsgSSLServerSocket {
         try {
             // Configuración del pool de conexiones HikariCP
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/pai_2");
+            config.setJdbcUrl("jdbc:mysql://192.168.0.92:3306/pai_2"); // IP Virtual (metalLB) del pod de mysql
             config.setUsername("root");
             config.setPassword("root");
             config.setMaximumPoolSize(300); // Se permite hasta 300 conexiones simultáneas
